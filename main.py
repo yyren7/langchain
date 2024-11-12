@@ -1,3 +1,4 @@
+from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated
 import operator
@@ -14,22 +15,27 @@ class AgentState(TypedDict):
 
 
 class Agent:
-
+    # langgraphを使って、multiagentフレームワークを構築しました。agentループの終了判定条件（質のいいコードを生成できた、必要の分のAPIだけを選択できた）のところはあんまり上手く設定できない現状です。
     def __init__(self, model, tools, system="", checkpointer=None):
         self.system = system
         graph = StateGraph(AgentState)
         graph.add_node("llm", self.call_deepseek)
-        """
         graph.add_node("document_llm", self.call_moonshot)
-        """
-        graph.add_node("action", self.take_action)
+        graph.add_node("selection_llm", self.call_moonshot)
+        graph.add_node("code_adjustment", self.take_action)
+        graph.add_conditional_edges(
+            "document_llm",
+            self.exists_action,
+            {True: "selection_llm", False: "llm"}
+        )
         graph.add_conditional_edges(
             "llm",
             self.exists_action,
-            {True: "action", False: END}
+            {True: "code_adjustment", False: END}
         )
-        graph.add_edge("action", "llm")
-        graph.set_entry_point("llm")
+        graph.add_edge("selection_llm", "document_llm")
+        graph.add_edge("code_adjustment", "llm")
+        graph.set_entry_point("document_llm")
         self.graph = graph.compile(checkpointer=checkpointer)
         self.tools = {t.name: t for t in tools}
         self.model = model.bind_tools(tools)
@@ -89,43 +95,19 @@ document_model = ChatOpenAI(
 ## Tool
 tool = TavilySearchResults(max_results=4)
 
-## Agent
-agent = Agent(model, [tool], system=prompt)
-
-from IPython.display import Image
-
-Image(agent.graph.get_graph().draw_png())
-
-messages = [HumanMessage(content="What is the weather in sf?")]
-result = agent.graph.invoke({"messages": messages})
-print(result)
-from IPython.display import Markdown
-
-print(result["messages"][-1].content)
-
-messages = [HumanMessage(content="What is the weather in SF and LA?")]
-result = agent.graph.invoke({"messages": messages})
-print(result["messages"][-1].content)
-
-messages = [HumanMessage(content="Who won the super bowl in 2024? In what state is the winning team headquarters "
-                                 "located? What is the GDP of that state? Answer each question.")]
-result = agent.graph.invoke({"messages": messages})
-print(result["messages"][-1].content)
-
 from langgraph.checkpoint.sqlite import SqliteSaver
-from IPython.display import Image
-import cv2
 
 with SqliteSaver.from_conn_string(":memory:") as memory:
     # Agent
     agent = Agent(model, [tool], system=prompt, checkpointer=memory)
-    agent.graph.get_graph().draw_png("1.png")
-
-
-    cv2.waitKey(0)
-
-    cv2.destroyAllWindows()
-
+    agent.graph.get_graph().draw_mermaid_png(curve_style=CurveStyle.LINEAR,
+                                             node_colors=NodeStyles(first="#ffdfba", last="#baffc9", default="#fad7de"),
+                                             wrap_label_n_words=9,
+                                             output_file_path="1.png",
+                                             draw_method=MermaidDrawMethod.API,
+                                             background_color="white",
+                                             padding=10)
+    '''
 
     # Image(agent.graph.get_graph().draw_png)
     messages = [HumanMessage(content="What is the weather in sf?")]
@@ -146,4 +128,4 @@ with SqliteSaver.from_conn_string(":memory:") as memory:
     for event in agent.graph.stream({"messages": messages}, thread):
         for v in event.values():
             print(v)
-
+    '''
