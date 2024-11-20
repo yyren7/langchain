@@ -1,0 +1,8 @@
+{
+    "api名称": "PauseScript（立即指令）",
+    "原型": "PauseScript()",
+    "描述": "暂停正在运行的工程。",
+    "参数": "无",
+    "返回": "ErrorID,{},PauseScript();",
+    "示例": "PauseScript()\n# 暂停正在运行的工程。"
+}

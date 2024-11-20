@@ -1,0 +1,8 @@
+{
+    "api名称": "DisableRobot（立即指令）",
+    "原型": "DisableRobot()",
+    "描述": "下使能机器人。",
+    "参数": "无",
+    "返回": "ErrorID,{},DisableRobot();",
+    "示例": "DisableRobot()\n# 下使能机器人。"
+}

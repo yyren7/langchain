@@ -1,0 +1,13 @@
+{
+    "api名称": "ModbusCreate（立即指令）",
+    "原型": "ModbusCreate(ip,port,slave_id,isRTU)",
+    "描述": "创建Modbus主站，并和从站建立连接。最多支持同时连接5个设备。",
+    "参数": [
+        {"参数名": "ip", "类型": "string", "说明": "从站IP地址。"},
+        {"参数名": "port", "类型": "int", "说明": "从站端口"},
+        {"参数名": "slave_id", "类型": "int", "说明": "从站ID"},
+        {"参数名": "isRTU", "类型": "int", "说明": "可选参数。如果不携带或为0，建立modbusTCP通信； 如果为1，建立modbusRTU通信"}
+    ],
+    "返回": "ErrorID,{index},ModbusCreate(ip,port,slave_id,isRTU);",
+    "示例": "ModbusCreate(127.0.0.1,60000,1,1)\n# 建立RTU通信主站，连接本机的Modbus从站，端口为60000，从站ID为1。"
+}

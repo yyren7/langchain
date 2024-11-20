@@ -1,0 +1,8 @@
+{
+    "api名称": "EmergencyStop（立即指令）",
+    "原型": "EmergencyStop()",
+    "描述": "紧急停止机械臂。急停后机械臂会下电并报警，需要清除报警后才能重新上电和使能。",
+    "参数": "无",
+    "返回": "ErrorID,{},EmergencyStop();",
+    "示例": "EmergencyStop()\n# 紧急停止机器人并下电。"
+}
