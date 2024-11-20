@@ -1,0 +1,77 @@
+要实现这个功能，我们需要使用旋转矩阵来计算机器臂在当前方向上的负方向移动。旋转矩阵可以帮助我们将移动向量从全局坐标系转换到局部坐标系（即机器臂的朝向）。
+
+以下是一个Python程序，它接受六维坐标 `P1` 作为输入，并通过旋转矩阵计算出移动后的新坐标 `P2`：
+
+```python
+import numpy as np
+
+def rotate_vector(rotation_angles, vector):
+    # 旋转角度
+    rx, ry, rz = np.radians(rotation_angles)
+    
+    # 旋转矩阵
+    Rx = np.array([[1, 0, 0],
+                   [0, np.cos(rx), -np.sin(rx)],
+                   [0, np.sin(rx), np.cos(rx)]])
+    
+    Ry = np.array([[np.cos(ry), 0, np.sin(ry)],
+                   [0, 1, 0],
+                   [-np.sin(ry), 0, np.cos(ry)]])
+    
+    Rz = np.array([[np.cos(rz), -np.sin(rz), 0],
+                   [np.sin(rz), np.cos(rz), 0],
+                   [0, 0, 1]])
+    
+    # 组合旋转矩阵
+    R = Rz @ Ry @ Rx
+    
+    # 旋转向量
+    rotated_vector = R @ vector
+    
+    return rotated_vector
+
+def move_in_direction(P1, distance):
+    # 提取位置和旋转角度
+    x, y, z, rx, ry, rz = P1
+    
+    # 定义移动向量（负方向）
+    move_vector = np.array([0, 0, -distance])
+    
+    # 旋转移动向量到局部坐标系
+    rotated_move_vector = rotate_vector((rx, ry, rz), move_vector)
+    
+    # 计算新位置
+    new_x = x + rotated_move_vector[0]
+    new_y = y + rotated_move_vector[1]
+    new_z = z + rotated_move_vector[2]
+    
+    # 返回新的六维坐标
+    P2 = [new_x, new_y, new_z, rx, ry, rz]
+    return P2
+
+# 示例输入
+P1 = [100, 200, 300, 30, 45, 60]  # 单位：mm 和 度
+distance = 100  # 单位：mm
+
+# 计算移动后的新坐标
+P2 = move_in_direction(P1, distance)
+
+# 输出结果
+print("移动后的新坐标 P2:", P2)
+```
+
+### 代码解释：
+1. **rotate_vector函数**：这个函数接受旋转角度和要旋转的向量，并返回旋转后的向量。旋转矩阵 `Rx`, `Ry`, `Rz` 分别对应绕 `x`, `y`, `z` 轴的旋转。
+
+2. **move_in_direction函数**：这个函数接受初始六维坐标 `P1` 和移动距离 `distance`，计算出移动后的新坐标 `P2`。移动向量在全局坐标系中是 `[0, 0, -distance]`，通过旋转矩阵将其转换到局部坐标系中，然后加上初始位置得到新位置。
+
+3. **示例输入**：`P1` 是一个示例的六维坐标，`distance` 是移动的距离（100mm）。你可以根据需要修改这些值。
+
+### 输出：
+程序将输出移动后的新坐标 `P2`，其中 `x`, `y`, `z` 是新的位置坐标，`rx`, `ry`, `rz` 保持不变。
+
+### 注意：
+- 旋转角度 `rx`, `ry`, `rz` 是以度为单位的，程序中使用了 `np.radians` 将其转换为弧度。
+- 移动向量在全局坐标系中是 `[0, 0, -distance]`，表示在 `z` 轴负方向移动。
+
+你可以根据需要调整输入参数和移动方向。
