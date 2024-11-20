@@ -63,6 +63,6 @@ response = client2.chat.completions.create(
 )
 result = response.choices[0].message.content
 print(response.choices[0].message.content)
-f2 = open("../dobot/minimized_api.json", 'w', encoding='UTF-8')
+f2 = open("../dobot_robot/minimized_api.json", 'w', encoding='UTF-8')
 f2.write(result)
 f2.close()

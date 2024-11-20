@@ -74,7 +74,7 @@ EnableRobot(0.5,0,0,5.5)
 # 使能机器人并设置负载重量1.5kg，Z方向偏心5.5mm。"
 }
 """
-with open('../dobot/api_description.json', 'r', encoding='utf-8') as file:
+with open('../dobot_robot/api_description.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
 names=data['api名称']
 file_content = str(np.load("../moonshot/mg400_api.npy"))

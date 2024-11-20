@@ -14,7 +14,7 @@ file_move = client1.files.create(file=Path("fr_move.pdf"), purpose="file-extract
 file_robot_config = client1.files.create(file=Path("resources/document/fr_robot_config.pdf"), purpose="file-extract")
 file_kinetic_control = client1.files.create(file=Path("resources/document/fr_kinetic_control.pdf"), purpose="file-extract")
 '''
-file_robot_status = client1.files.create(file=Path("../dobot/dobot_mg400.pdf"), purpose="file-extract")
+file_robot_status = client1.files.create(file=Path("../dobot_robot/dobot_mg400.pdf"), purpose="file-extract")
 '''
 file_content1 = client1.files.content(file_id=file_basic.id).text
 file_content2 = client1.files.content(file_id=file_move.id).text
