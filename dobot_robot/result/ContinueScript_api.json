@@ -1,0 +1,8 @@
+{
+    "api名称": "ContinueScript（立即指令）",
+    "原型": "ContinueScript()",
+    "描述": "继续已暂停的工程。",
+    "参数": "无",
+    "返回": "ErrorID,{},ContinueScript();",
+    "示例": "ContinueScript()\n# 继续已暂停的工程。"
+}

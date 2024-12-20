@@ -1,0 +1,13 @@
+{
+    "api名称": "RelJointMovJ",
+    "原型": "RelJointMovJ(Offset1,Offset2,Offset3,Offset4,SpeedJ=R,AccJ=R,CP=R)",
+    "描述": "沿关节坐标系进行相对运动，末端运动方式为关节运动。",
+    "参数": [
+        {"参数名": "Offset1", "类型": "double", "说明": "J1轴偏移量，单位：度"},
+        {"参数名": "Offset2", "类型": "double", "说明": "J2轴偏移量，单位：度"},
+        {"参数名": "Offset3", "类型": "double", "说明": "J3轴偏移量，单位：度"},
+        {"参数名": "Offset4", "类型": "double", "说明": "J4轴偏移量，单位：度"}
+    ],
+    "返回": "ErrorID,{},RelJointMovJ(Offset1,Offset2,Offset3,Offset4);",
+    "示例": "RelJointMovJ(10,10,10,0)\n# 机械臂J1，J2，J3轴分别偏移10度。"
+}

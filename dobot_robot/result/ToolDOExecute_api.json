@@ -1,0 +1,19 @@
+{
+    "api名称": "ToolDOExecute（立即指令）",
+    "原型": "ToolDOExecute(index,status)",
+    "描述": "设置末端数字输出端口状态（立即指令）。",
+    "参数": [
+        {
+            "参数名": "index",
+            "类型": "int",
+            "说明": "末端DO端子的编号"
+        },
+        {
+            "参数名": "status",
+            "类型": "int",
+            "说明": "末端DO端子的状态，1：有信号；0：无信号"
+        }
+    ],
+    "返回": "ErrorID,{}, ToolDOExecute(index,status);",
+    "示例": "ToolDOExecute(1,1)\n# 无视指令队列，立即设置末端DO1为有信号。"
+}

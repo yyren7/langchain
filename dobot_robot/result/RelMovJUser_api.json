@@ -1,0 +1,14 @@
+{
+    "api名称": "RelMovJUser",
+    "原型": "RelMovJUser(OffsetX,OffsetY,OffsetZ,OffsetR, User,SpeedJ=R, AccJ=R,Tool=Index,CP=R)",
+    "描述": "沿用户坐标系进行相对运动，末端运动方式为关节运动。",
+    "参数": [
+        {"参数名": "OffsetX", "类型": "double", "说明": "X轴方向偏移量，单位：mm"},
+        {"参数名": "OffsetY", "类型": "double", "说明": "Y轴方向偏移量，单位：mm"},
+        {"参数名": "OffsetZ", "类型": "double", "说明": "Z轴方向偏移量，单位：mm"},
+        {"参数名": "OffsetR", "类型": "double", "说明": "R轴偏移量，单位：度"},
+        {"参数名": "User", "类型": "int", "说明": "选择已标定的用户坐标系索引"}
+    ],
+    "返回": "ErrorID,{},RelMovJUser(OffsetX,OffsetY,OffsetZ,OffsetR,User,SpeedJ=R,AccJ=R,Tool=Index);",
+    "示例": "RelMovJUser(10,10,10,0,0)\n# 机械臂沿用户坐标系0进行相对关节运动，在X、Y、Z轴上各偏移10mm。"
+}

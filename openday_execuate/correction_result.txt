@@ -1,0 +1,195 @@
+Let's review the provided script to ensure all functions are correctly used according to the API documentation.
+
+### Review of the Script:
+
+1. **Connect to the Robot:**
+   ```python
+   def connect_robot():
+       ip = "192.168.250.101"
+       dashboard_port = 29999
+       move_port = 30003
+       feed_port = 30004
+
+       dashboard = DobotApiDashboard(ip, dashboard_port)
+       move = DobotApiMove(ip, move_port)
+       feed = DobotApi(ip, feed_port)
+
+       return dashboard, move, feed
+   ```
+   - **Correct**: This part is correctly using the `DobotApiDashboard`, `DobotApiMove`, and `DobotApi` classes to connect to the robot.
+
+2. **Activate the Robot and Set Speed:**
+   ```python
+   dashboard.EnableRobot()
+   time.sleep(2)
+   dashboard.SpeedFactor(50)
+   ```
+   - **Correct**: `EnableRobot()` and `SpeedFactor(50)` are correctly used from the `DobotApiDashboard` class.
+
+3. **Load Points:**
+   ```python
+   points = load_points('./generated_points.json')
+   ```
+   - **Correct**: This is a standard JSON loading function and does not involve the API.
+
+4. **Pick and Place Tasks:**
+   ```python
+   for i in range(len(pick_points)):
+       k += 1
+
+       # Pick task
+       pick_x = float(pick_points[i]['x'])
+       pick_y = float(pick_points[i]['y'])
+       pick_z = float(pick_points[i]['z'])
+       pick_r = float(pick_points[i]['r'])
+
+       # Move 40 cm above the pick position
+       move.MovJ(pick_x, pick_y, pick_z + 40, pick_r)
+       feed.Sync()
+
+       # Move down 40 cm
+       move.MovL(pick_x, pick_y, pick_z, pick_r)
+       feed.Sync()
+
+       # Activate digital output
+       dashboard.DO(1, 1)
+
+       # Move up 40 cm
+       move.MovL(pick_x, pick_y, pick_z + 40, pick_r)
+       feed.Sync()
+
+       # Place task
+       place_x = float(place_points[i]['x'])
+       place_y = float(place_points[i]['y'])
+       place_z = float(place_points[i]['z'])
+       place_r = float(place_points[i]['r'])
+
+       # Move 40 cm above the place position
+       move.MovJ(place_x, place_y, place_z + 40, place_r)
+       feed.Sync()
+
+       # Move down 40 cm
+       move.MovL(place_x, place_y, place_z, place_r)
+       feed.Sync()
+
+       # Deactivate digital output
+       dashboard.DO(1, 0)
+
+       # Move up 40 cm
+       move.MovL(place_x, place_y, place_z + 40, place_r)
+       feed.Sync()
+
+       print(f"[Task {k} completed]")
+   ```
+   - **Error**: `feed.Sync()` should be `move.Sync()`. The `Sync()` function belongs to the `DobotApiMove` class, not `DobotApi`.
+
+5. **Exchange Pick and Place Positions:**
+   ```python
+   k = 0
+   print("[All tasks completed]")
+   pick_points, place_points = place_points, pick_points
+   ```
+   - **Correct**: This part does not involve the API.
+
+### Corrected Version of the Program:
+
+```python
+import json
+import time
+from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove
+
+def connect_robot():
+    ip = "192.168.250.101"
+    dashboard_port = 29999
+    move_port = 30003
+    feed_port = 30004
+
+    dashboard = DobotApiDashboard(ip, dashboard_port)
+    move = DobotApiMove(ip, move_port)
+    feed = DobotApi(ip, feed_port)
+
+    return dashboard, move, feed
+
+def load_points(file_path):
+    with open(file_path, 'r') as file:
+        points = json.load(file)
+    return points
+
+def main():
+    dashboard, move, feed = connect_robot()
+
+    # Activate the robot
+    dashboard.EnableRobot()
+    time.sleep(2)
+
+    # Set speed to 50%
+    dashboard.SpeedFactor(50)
+
+    points = load_points('./generated_points.json')
+
+    pick_points = points['groups'][0]['coordinates']
+    place_points = points['groups'][1]['coordinates']
+
+    k = 0
+
+    while True:
+        for i in range(len(pick_points)):
+            k += 1
+
+            # Pick task
+            pick_x = float(pick_points[i]['x'])
+            pick_y = float(pick_points[i]['y'])
+            pick_z = float(pick_points[i]['z'])
+            pick_r = float(pick_points[i]['r'])
+
+            # Move 40 cm above the pick position
+            move.MovJ(pick_x, pick_y, pick_z + 40, pick_r)
+            move.Sync()
+
+            # Move down 40 cm
+            move.MovL(pick_x, pick_y, pick_z, pick_r)
+            move.Sync()
+
+            # Activate digital output
+            dashboard.DO(1, 1)
+
+            # Move up 40 cm
+            move.MovL(pick_x, pick_y, pick_z + 40, pick_r)
+            move.Sync()
+
+            # Place task
+            place_x = float(place_points[i]['x'])
+            place_y = float(place_points[i]['y'])
+            place_z = float(place_points[i]['z'])
+            place_r = float(place_points[i]['r'])
+
+            # Move 40 cm above the place position
+            move.MovJ(place_x, place_y, place_z + 40, place_r)
+            move.Sync()
+
+            # Move down 40 cm
+            move.MovL(place_x, place_y, place_z, place_r)
+            move.Sync()
+
+            # Deactivate digital output
+            dashboard.DO(1, 0)
+
+            # Move up 40 cm
+            move.MovL(place_x, place_y, place_z + 40, place_r)
+            move.Sync()
+
+            print(f"[Task {k} completed]")
+
+        k = 0
+        print("[All tasks completed]")
+
+        # Exchange pick and place positions
+        pick_points, place_points = place_points, pick_points
+
+if __name__ == "__main__":
+    main()
+```
+
+### Summary of Corrections:
+- **Error**: `feed.Sync()` should be `move.Sync()`.
+- **Corrected**: All other functions and their usage are correct according to the API documentation.

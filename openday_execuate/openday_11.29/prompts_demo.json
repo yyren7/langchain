@@ -1,0 +1,189 @@
+{
+    "groups": [
+        {
+            "name": "pick",
+            "coordinates": [
+                {
+                    "number": "1",
+                    "x": "295",
+                    "y": "196",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "2",
+                    "x": "274",
+                    "y": "196",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "3",
+                    "x": "253",
+                    "y": "196",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "4",
+                    "x": "295",
+                    "y": "175",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "5",
+                    "x": "274",
+                    "y": "175",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "6",
+                    "x": "253",
+                    "y": "175",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "7",
+                    "x": "295",
+                    "y": "154",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "8",
+                    "x": "274",
+                    "y": "154",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "9",
+                    "x": "253",
+                    "y": "154",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "10",
+                    "x": "295",
+                    "y": "133",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "11",
+                    "x": "274",
+                    "y": "133",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "12",
+                    "x": "253",
+                    "y": "133",
+                    "z": "15",
+                    "r": "0"
+                }
+            ]
+        },
+        {
+            "name": "place",
+            "coordinates": [
+                {
+                    "number": "1",
+                    "x": "242",
+                    "y": "283",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "2",
+                    "x": "221",
+                    "y": "283",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "3",
+                    "x": "200",
+                    "y": "283",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "4",
+                    "x": "179",
+                    "y": "283",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "5",
+                    "x": "242",
+                    "y": "304",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "6",
+                    "x": "221",
+                    "y": "304",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "7",
+                    "x": "200",
+                    "y": "304",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "8",
+                    "x": "179",
+                    "y": "304",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "9",
+                    "x": "242",
+                    "y": "325",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "10",
+                    "x": "221",
+                    "y": "325",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "11",
+                    "x": "200",
+                    "y": "325",
+                    "z": "15",
+                    "r": "0"
+                },
+                {
+                    "number": "12",
+                    "x": "179",
+                    "y": "325",
+                    "z": "15",
+                    "r": "0"
+                }
+            ]
+        }
+    ],
+    "prompts": [
+        "\"This assistant generates Python code for robot pick-and-place tasks by using the provided API and following the example program. It must understand the internal structure of the API and use the following imports: from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove and def connect_robot() with right ip and port..At the start of the task, the robot must be activated, and there should be a 2-second wait. The robot's speed should be adjusted to 50% of its maximum speed.Strict adherence to the API usage methods is required, and only the functions provided in the API should be used to generate the program. Do not use any other unspecified functions, as this will cause errors.After each motion command, a synchronization command must be used to ensure the robot reaches the specified position before unlocking the next step. Otherwise, it will result in discrepancies between the program and the robot's movement.\"",
+        "\"pick_origin = [295, 196, 15, 0],From this point, there are three objects in total spaced 21 units apart leftward (x smaller) from each other. Then,to the downside(y smaller) of this row, there are four rows of objects in total arranged in the same pattern, at 21 units away from each other.so there should be 12 pick points in total. \nplace_origin = [242, 283, 15, 0],From this point, there are four objects in total spaced 21 units apart leftward(x smaller) from each other. Then, to the upside(y bigger) of this row, there are three rows of objects in total arranged in the same pattern, at 21 units away from each other.so there should be 12 place points in total. Only tell me every pick points and place points.\"",
+        "\" Check each line of code in the program uses functions from DobotApiDashboard, DobotApi or DobotApiMove. Make sure the function is in their respective function lists as documented in the API.For example,1.Sync() belongs to the DobotApiMove class or move, not the DobotApi class or feed. 2.SpeedFactor() belongs to the DobotApiDashboard class, not the DobotApiMove class.The function name, number of parameters, and parameter types must strictly match the API documentation.For example,1.The MovL and MovJ commands must accept four individual numerical values rather than an array.2.the function name should not be created as speed_factor() but SpeedFactor(). If there are any errors, provide a corrected version of the program.only output the corrected program and short explanation.\"",
+        "\"Pick-and-place task: Assume there are k pick coordinates.1.First, move to a position 40 cm directly above the starting pick coordinate, then move 40 cm downward.2.Use the relevant function from mg400_api to activate the specified digital output and wait for 0.2 second.3.Ascend 40 cm from the current position.4.Move to a position 40 cm directly above the placement coordinate, then move 40 cm downward.5.Use the relevant function from mg400_api to deactivate the specified digital output and wait for 0.2 second.6.Ascend 40 cm from the current position.7.Return the string [Task k completed] for the k-th task.8.After completing all tasks in the loop, reset the value of k to zero and return the string [All tasks completed]. 9.Exchange the pick positions and place locations with each other.Repeat this program from the beginning forever.\"",
+        "\"pick the objects and place them in the specified positions. Provided IP adress = 192.168.250.101. DO=1.\""
+    ]
+}

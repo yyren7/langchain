@@ -1,0 +1,111 @@
+以下是根据您的要求生成的机器人控制Python代码：
+
+```python
+import time
+import socket
+
+# 机器人控制API
+def EnableRobot(load=None, centerX=None, centerY=None, centerZ=None):
+    if load is None and centerX is None and centerY is None and centerZ is None:
+        command = "EnableRobot()"
+    elif centerX is None and centerY is None and centerZ is None:
+        command = f"EnableRobot({load})"
+    else:
+        command = f"EnableRobot({load},{centerX},{centerY},{centerZ})"
+    send_command(command)
+
+def MovL(X, Y, Z, R, SpeedL=None, AccL=None, CP=None):
+    command = f"MovL({X},{Y},{Z},{R})"
+    if SpeedL is not None:
+        command += f",SpeedL={SpeedL}"
+    if AccL is not None:
+        command += f",AccL={AccL}"
+    if CP is not None:
+        command += f",CP={CP}"
+    send_command(command)
+
+def MovJ(X, Y, Z, R, SpeedJ=None, AccJ=None, CP=None):
+    command = f"MovJ({X},{Y},{Z},{R})"
+    if SpeedJ is not None:
+        command += f",SpeedJ={SpeedJ}"
+    if AccJ is not None:
+        command += f",AccJ={AccJ}"
+    if CP is not None:
+        command += f",CP={CP}"
+    send_command(command)
+
+def MoveJog(axisID, CoordType=None, User=None, Tool=None):
+    command = f"MoveJog({axisID})"
+    if CoordType is not None:
+        command += f",CoordType={CoordType}"
+    if User is not None:
+        command += f",User={User}"
+    if Tool is not None:
+        command += f",Tool={Tool}"
+    send_command(command)
+
+# 辅助函数
+def send_command(command):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("192.168.250.101", 502))
+    s.sendall(command.encode())
+    response = s.recv(1024)
+    s.close()
+    return response.decode()
+
+def move_in_direction(pos, direction, distance):
+    # 假设direction是"X", "Y", "Z"中的一个
+    if direction == "X":
+        pos[0] += distance
+    elif direction == "Y":
+        pos[1] += distance
+    elif direction == "Z":
+        pos[2] += distance
+    return pos
+
+# 主程序
+def main():
+    # 启动机器人
+    EnableRobot()
+    time.sleep(2)
+
+    # 抓取和放置任务
+    pos_start = [284, 4, 90, -43]
+    pos_end = [280, 104, 80, -23]
+
+    # 计算新抓取和放置坐标
+    new_pos_start = move_in_direction(pos_start, "X", -10)
+    new_pos_end = move_in_direction(pos_end, "X", -10)
+
+    # 到达新抓取位置
+    MovJ(*new_pos_start)
+    MoveJog("Z+", CoordType=1)
+    time.sleep(1)
+    MoveJog("Z-", CoordType=1)
+    time.sleep(1)
+
+    # 到达新放置位置
+    MovJ(*new_pos_end)
+    MoveJog("Z+", CoordType=1)
+    time.sleep(1)
+    MoveJog("Z-", CoordType=1)
+    time.sleep(1)
+
+    # 关闭机器人
+    EnableRobot()
+
+if __name__ == "__main__":
+    main()
+```
+
+### 代码说明：
+1. **EnableRobot**: 启动和关闭机器人。
+2. **MovL** 和 **MovJ**: 分别用于直线运动和关节运动。
+3. **MoveJog**: 用于点动控制，这里用于在抓取和放置位置前后移动。
+4. **move_in_direction**: 辅助函数，用于计算在指定方向上移动一定距离后的新坐标。
+5. **main**: 主程序，首先启动机器人，然后执行抓取和放置任务，最后关闭机器人。
+
+### 注意事项：
+- 代码中的`send_command`函数是一个示例，实际使用时需要根据具体的通信协议进行调整。
+- `move_in_direction`函数假设方向是"X", "Y", "Z"中的一个，如果需要其他方向，可以扩展该函数。
+- 代码中的`time.sleep(1)`用于模拟点动操作的时间，实际使用时可以根据需要调整。

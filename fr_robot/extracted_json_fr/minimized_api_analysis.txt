@@ -1,0 +1,101 @@
+从上述文件中提取的与启动关闭机器人、机器臂移动、坐标转换、旋转矩阵、坐标系转换、运动学/逆运动学求解、工具坐标移动等最为相关的API名称如下：
+
+1. **机器人基础**
+   - RPC
+   - GetSDKVersion
+   - GetControllerIP
+   - Mode
+   - DragTeachSwitch
+   - IsInDragTeach
+   - RobotEnable
+
+2. **机器人运动**
+   - StartJOG
+   - StopJOG
+   - ImmStopJOG
+   - MoveJ
+   - MoveL
+   - MoveC
+   - Circle
+   - NewSpiral
+   - ServoMoveStart
+   - ServoMoveEnd
+   - ServoJ
+   - ServoCart
+   - MoveCart
+   - SplineStart
+   - SplinePTP
+   - SplineEnd
+   - NewSplineStart
+   - NewSplineEnd
+   - NewSplinePoint
+   - StopMotion
+   - PointsOffsetEnable
+   - PointsOffsetDisable
+   - MoveAOStart
+   - MoveAOStop
+   - MoveToolAOStart
+   - MoveToolAOStop
+
+3. **机器人常用设置**
+   - SetSpeed
+   - SetSysVarValue
+   - SetToolPoint
+   - ComputeTool
+   - SetTcp4RefPoint
+   - ComputeTcp4
+   - SetToolCoord
+   - SetToolList
+   - SetExTCPPoint
+   - ComputeExTCF
+   - SetExToolCoord
+   - SetExToolList
+   - SetWObjCoordPoint
+   - ComputeWObjCoord
+   - SetWObjCoord
+   - SetWObjList
+   - SetLoadWeight
+   - SetRobotInstallPos
+   - SetRobotInstallAngle
+   - SetLoadCoord
+   - WaitMs
+   - SetOaccScale
+
+4. **机器人状态查询**
+   - GetRobotInstallAngle
+   - GetSysVarValue
+   - GetActualJointPosDegree
+   - GetActualJointPosRadian
+   - GetActualJointSpeedsDegree
+   - GetTargetTCPCompositeSpeed
+   - GetActualTCPCompositeSpeed
+   - GetTargetTCPSpeed
+   - GetActualTCPSpeed
+   - GetActualTCPPose
+   - GetActualTCPNum
+   - GetActualWObjNum
+   - GetActualToolFlangePose
+   - GetInverseKin
+   - GetInverseKinRef
+   - GetInverseKinHasSolution
+   - GetForwardKin
+   - GetJointTorques
+   - GetTargetPayload
+   - GetTargetPayloadCog
+   - GetTCPOffset
+   - GetWObjOffset
+   - GetJointSoftLimitDeg
+   - GetSystemClock
+   - GetRobotCurJointsConfig
+   - GetDefaultTransVel
+   - GetRobotMotionDone
+   - GetRobotErrorCode
+   - GetRobotTeachingPoint
+   - GetSSHKeygen
+   - ComputeFileMD5
+   - GetSoftwareVersion
+   - GetSlaveHardVersion
+   - GetSlaveFirmVersion
+   - GetDHCompensation
+
+总共有 **68** 个API，我选择了 **68** 个API。

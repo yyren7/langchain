@@ -1,0 +1,8 @@
+{
+    "api名称": "SetCollisionLevel（队列指令）",
+    "原型": "SetCollisionLevel(level)",
+    "描述": "设置碰撞检测等级。该命令设置的碰撞检测等级仅在本次TCP/IP控制模式中生效，未设置时沿用进入TCP/IP控制模式前控制软件设置的值。",
+    "参数": "[{\"参数名\":level,\"类型\":int,\"说明\":\"碰撞检测等级，0表示关闭碰撞检测，1~5数字越大灵敏度越高\"}]",
+    "返回": "ErrorID,{},SetCollisionLevel(level);",
+    "示例": "SetCollisionLevel(1)\n# 设置碰撞检测等级为1。"
+}

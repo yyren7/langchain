@@ -1,0 +1,68 @@
+@startuml
+
+actor ユーザ
+box Raspberry Pi
+participant ノーコードツール
+participant ティーチングUI
+participant 動作実行プログラム
+end box
+
+group 動作作成
+    ユーザ -> ノーコードツール : キー＆マウス操作
+    activate ノーコードツール
+    note over ノーコードツール : GUI作成
+    ユーザ <-- ノーコードツール
+    deactivate ノーコードツール
+
+    ユーザ -> ノーコードツール : 保存
+    activate ノーコードツール
+    note right ノーコードツール : /lib/motion.py 
+    ユーザ <-- ノーコードツール
+    deactivate ノーコードツール
+end
+
+group 動作設定
+    ユーザ -> ティーチングUI : 動作設定値入力    
+    activate ティーチングUI
+    note over ティーチングUI : 表示更新
+    ティーチングUI <-- ユーザ
+    deactivate ティーチングUI
+
+    ユーザ -> ティーチングUI : 保存
+    activate ティーチングUI
+    note right ティーチングUI : /config/recipe.json
+    ユーザ <-- ティーチングUI
+    deactivate ティーチングUI
+end
+
+group 動作実行
+    ユーザ -> ティーチングUI : 動作番号＆動作レシピ入力  
+    activate ティーチングUI
+        note over ティーチングUI : 表示更新
+        ティーチングUI <-- ユーザ
+    deactivate ティーチングUI
+
+    ユーザ -> ティーチングUI : プログラム起動
+    ティーチングUI -> 動作実行プログラム : 起動命令
+    activate 動作実行プログラム
+        note over 動作実行プログラム : プログラム起動中
+        ユーザ <-- 動作実行プログラム
+    deactivate 動作実行プログラム
+
+    ユーザ -> ティーチングUI : 自動運転開始
+    ティーチングUI -> 動作実行プログラム : 開始命令
+    activate 動作実行プログラム
+        動作実行プログラム -> ロボット : 動作命令
+        note over 動作実行プログラム : プログラム動作中
+        activate ロボット
+        note over ロボット : ロボット動作中
+        動作実行プログラム <-- ロボット
+        deactivate ロボット
+        ユーザ <-- 動作実行プログラム
+    deactivate 動作実行プログラム
+
+end
+
+participant ロボット
+
+@enduml

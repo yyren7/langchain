@@ -1,0 +1,8 @@
+{
+    "api名称": "RunScript（立即指令）",
+    "原型": "RunScript(projectName)",
+    "描述": "运行指定工程。",
+    "参数": "[{\"参数名\":projectName,\"类型\":string,\"说明\":工程文件的名称}]",
+    "返回": "ErrorID,{},RunScript(projectName);",
+    "示例": "RunScript(\"demo\")\n# 运行名称为demo的工程。"
+}

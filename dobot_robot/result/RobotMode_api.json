@@ -1,0 +1,8 @@
+{
+    "api名称": "RobotMode（立即指令）",
+    "原型": "RobotMode()",
+    "描述": "获取机器人当前状态。",
+    "参数": "无",
+    "返回": "ErrorID,{Value},RobotMode();\nValue取值范围如下：\n取 值 定义 说明\n1 ROBOT_MODE_INIT 初始化\n2 ROBOT_MODE_BRAKE_OPEN 有任意关节的抱闸松开\n3 ROBOT_MODE_POWER_STATUS 本体未上电\n4 ROBOT_MODE_DISABLED 未使能（无抱闸松开）\n5 ROBOT_MODE_ENABLE 使能且空闲（未运行工程且无报警）\n6 ROBOT_MODE_BACKDRIVE 拖拽模式\n7 ROBOT_MODE_RUNNING 运行状态，包括轨迹复现/拟合中，机器人执行 运动命令中，工程运行中。\n8 ROBOT_MODE_RECORDING 轨迹录制模式\n9 ROBOT_MODE_ERROR 有未清除的报警。此状态优先级最高，无论机 械臂处于什么状态，有报警时都返回9\n10 ROBOT_MODE_PAUSE 暂停状态\n11 ROBOT_MODE_JOG 点动中",
+    "示例": "RobotMode()\n获取机器人当前状态。"
+}

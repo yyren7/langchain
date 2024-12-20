@@ -1,0 +1,8 @@
+{
+    "api名称": "StopScript（立即指令）",
+    "原型": "StopScript()",
+    "描述": "停止正在运行的工程。",
+    "参数": "无",
+    "返回": "ErrorID,{},StopScript();",
+    "示例": "StopScript()\n# 停止正在运行的工程。"
+}

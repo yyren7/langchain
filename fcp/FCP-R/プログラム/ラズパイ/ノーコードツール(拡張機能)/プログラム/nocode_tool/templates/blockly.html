@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 体裁 -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" value="notranslate">
+  <title>Blockly:</title>
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Blockly -->
+  <script src="/blockly/blockly_compressed.js"></script>
+  <script src="/blockly/blocks_compressed.js"></script>
+  <script src="/blockly/python_compressed.js"></script>
+  <script src="/blockly/en.js"></script>
+  <script src="/js/myblocks.js"></script>
+  <script src="/js/toolbox.js"></script>
+  <script src="/js/tabSwitch.js" defer></script>
+
+  <style>
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .blue_button {
+      background-color: #24618a; /* 初期の色 */
+      color: #ccc; /* 初期の文字色 */
+      border-color: gray;
+      cursor: pointer; /* マウスカーソルをポインターにする */
+      width: 100px; /* 枠の幅 */
+      height: 50px; /* 枠の高さ */
+      transform: translate(40px, 100px); /* 右下に20pxずつ移動 */
+      padding: 10px 20px; /* ボタンの内側の余白 */
+      font-size: 16px; /* ボタンの文字サイズ */
+    }
+
+    .red_button {
+      background-color: #922f16; /* 初期の色 */
+      color: #ccc; /* 初期の文字色 */
+      border-color: gray;
+      cursor: pointer; /* マウスカーソルをポインターにする */
+      width: 100px; /* 枠の幅 */
+      height: 50px; /* 枠の高さ */
+      transform: translate(40px, 100px); /* 右下に20pxずつ移動 */
+      padding: 10px 20px; /* ボタンの内側の余白 */
+      font-size: 16px; /* ボタンの文字サイズ */
+    }   
+    
+    .container {
+      display: inline-block; /* flexboxを使用せず、要素をブロックレベルで配置する */
+      padding: 5px; /* 固定文字と数字の間のスペースを設定 */
+      transform: translate(250px, 100px); /* 右下に20pxずつ移動 */
+    }
+    .fixed-text {
+      border: 1px solid black; /* 固定文字の枠線を設定 */
+      padding: 3px; /* 枠内の余白を設定 */
+      margin-right: -6px; /* 要素間の間隔を狭める */
+    }
+    .position {
+      display: inline-block; /* flexboxを使用せず、要素をブロックレベルで配置する */
+      border: 1px solid black; /* 数字の枠線を設定 */
+      width: 100px; /* ボックスの幅を固定する */
+      padding: 3px; /* 枠内の余白を設定 */
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <input type="text" id="override" class="position" value="100">
+    <span>%</span>
+  </div>
+
+  <div class="button-container">
+    <button class="blue_button" id="start_SW" onclick="sendText2MonitorServer('startPython', 'auto')">auto run</button>
+    <button class="red_button" id="stop_SW" onclick="sendCmd2MonitorServer('stopPython')">stop</button>
+    <button class="red_button" id="pause_SW" onclick="sendCmd2ControlServer('pauseRobot')">pause</button>
+    <button class="blue_button" id="read_xml" onclick="readXML()">raad blocks</button>
+    <button class="blue_button" id="read_xml" onclick="writeXML()">write blocks</button>
+    <script>
+      const start = document.getElementById('start_SW');
+      const stop = document.getElementById('stop_SW');
+      const pause = document.getElementById('pause_SW');
+
+      const dst_IP_addr = window.location.hostname;
+
+    
+    </script>
+  </div>
+
+  <div class="tabs">
+      <ul class="visual">
+        <li><a href="" class="active">Block</a></li>
+        <li><a href="" onclick="getCode()">Code</a></li>
+        <li><a href="" onclick="fetchJson()">Update</a></li>
+        <!-- <li><a href="" onclick="getStatusFromControlServer('getRobotStatus')">status</a></li> -->
+        <!-- <li><a href="" onclick="sendText2MonitorServer('startPython')">start</a></li>
+        <li><a href="" onclick="sendCmd2MonitorServer('stopPython')">stop</a></li>
+        <li><a href="" onclick="sendCmd2ControlServer('runRobot')">run</a></li> -->
+      </ul>
+      <ul class="contents">
+        <li class="active">
+          <div id="blocklyDiv" style="height: 700px; width: 1000px;"></div>
+        </li>
+        <li>
+          <pre id="content_python"></pre>
+        </li>
+        <li>コンテンツ3</li>
+        <!-- <li>コンテンツ4</li> -->
+      </ul>
+  </div>
+
+<pre id="jsonData"></pre>
+  <script>  
+   
+    function sendTextQueryWithPostFetchReq(port, path, text, query1) {
+      fetch(`http://${dst_IP_addr}:`+ String(port) + '/' + path + '?query1=' + encodeURIComponent(query1), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // リクエストのコンテンツタイプをJSONに設定
+        },
+        body: text
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function getTextWithGetFetchReq(port, path)  {
+      return fetch(`http://${dst_IP_addr}:`+ String(port) + '/' + path)
+      .then(response => {
+        // レスポンスをJSONに変換し、その結果を処理するPromiseを返す
+        return response.text();
+      })
+      .catch(error => {
+        console.error('Error fetching Text data', error);
+        throw error;
+      });
+    }
+
+    // The toolbox gets passed to the configuration struct during injection.
+    const workspace = Blockly.inject('blocklyDiv', {
+      toolbox: toolbox,
+      zoom: {
+        controls: true, // ズームコントロールを表示する
+        wheel: true,    // マウスホイールでズームする
+        startScale: 1.0, // 初期ズーム倍率
+        maxScale: 3,     // 最大ズーム倍率
+        minScale: 0.3,   // 最小ズーム倍率
+        scaleSpeed: 1.2  // ズーム速度
+      },
+      grid: {
+        spacing: 20, // グリッドの間隔（ピクセル単位）
+        length: 3,   // グリッド線の長さ（表示される線の数）
+        colour: '#ccc', // グリッドの色
+        snap: true   // ブロックをグリッドにスナップさせるかどうか
+      },
+      trashcan: true  // ゴミ箱を有効にする
+    });
+    
+    const myBlock = new BlockFlow(); // クラスのインスタンスを作成
+
+    fetchJson();
+
+    function fetchJson() {
+      fetch(`http://${dst_IP_addr}:3000/jsonData`)
+      .then(response => {
+        // レスポンスをJSONに変換し、その結果を処理するPromiseを返す
+        return response.json();
+      })
+    .then(data => {
+        // JSONデータを処理する
+        BlockFlow.setJson(data);
+        return data; // 必要に応じてJSONデータを返す
+      })
+      .catch(error => console.error('Error fetching JSON data', error));
+    }
+
+    function sendText2MonitorServer(url, prog_name) {
+      getCode(); // コード生成
+      const code = document.getElementById('content_python').textContent
+      fetch(`http://${dst_IP_addr}:3001/` + url + '?prog_name=' + encodeURIComponent(prog_name), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // リクエストのコンテンツタイプをJSONに設定
+        },
+        body: code
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function sendCmd2MonitorServer(url) {
+      fetch(`http://${dst_IP_addr}:3001/` + url)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to fetch data from "monitor python server"');
+          }
+          return response.text();
+      })
+      .then(data => {
+          // ボタンの色を初期化
+          start.style.backgroundColor = ''; // ボタンの背景色をデフォルトに設定
+          start.style.color = ''; 
+          pause.style.backgroundColor = ''; // ボタンの背景色をデフォルトに設定
+          pause.style.color = ''; 
+          console.log('Data from "monitor python server":', data);
+      })
+      .catch(error => {
+          console.error('Error fetching data from "monitor python server":', error);
+      });
+    }
+
+    function sendCmd2ControlServer(url) {
+      fetch(`http://${dst_IP_addr}:3002/` + url)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to fetch data from "control python server"');
+          }
+          return response.text();
+      })
+      .then(data => {
+          console.log('Data from "control python server":', data);
+      })
+      .catch(error => {
+          console.error('Error fetching data from "control python server":', error);
+      });
+    }
+
+    function getStatusFromControlServer(url) {
+      return new Promise((resolve, reject) => {
+          fetch(`http://${dst_IP_addr}:3002/` + url)
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Failed to fetch data from "control python server"');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  console.log('Data from "control python server":', data);
+                  resolve(data); // 成功時にデータを返す
+              })
+              .catch(error => {
+                  console.error('Error fetching data from "control python server":', error);
+                  reject(error); // エラー時にエラーを返す
+              });
+      });
+    }
+
+
+    // ブロックフローの更新 
+    function update() {
+      getStatusFromControlServer('getRobotStatus')
+          .then(data => {
+            const word = data.R_relay[50];
+            // 16ビットの配列を初期化
+            const bit_ary = [];
+            // ビット演算を使用して1ワードのデータを16ビットに分解
+            for (let i = 0; i < 16; i++) {
+              bit_ary.push((word >> (15 - i)) & 1);
+            }
+            bit_ary.reverse();
+            //////////////////////////////////////////////////
+            // ボタンの色変更
+            //////////////////////////////////////////////////
+            if (bit_ary[0] === 1) {
+              start.style.backgroundColor = '#08c1fa'; // ボタンの背景色を赤に設定
+              start.style.color = '#070000'; 
+            } else {
+              start.style.backgroundColor = ''; // ボタンの背景色をデフォルトに設定
+              start.style.color = ''; 
+            }
+            if (bit_ary[1] === 1) {
+              pause.style.backgroundColor = '#ee190a'; // ボタンの背景色を赤に設定
+              pause.style.color = '#070000'; 
+            } else {
+              pause.style.backgroundColor = ''; // ボタンの背景色をデフォルトに設定
+              pause.style.color = ''; 
+            }
+            BlockFlow.setRelay(data);
+ 
+            //////////////////////////////////////////////////
+            // オーバーライド値
+            //////////////////////////////////////////////////
+            let override = document.getElementById('override');
+            BlockFlow.setMotionParam(override.value);
+
+            myBlock.updateBlock();
+            setTimeout(update, 500); // リクエストが完了した後、0.5秒後に再帰的に update() を呼び出す
+          })
+          .catch(error => {
+            //////////////////////////////////////////////////
+            // オーバーライド値
+            //////////////////////////////////////////////////
+            let override = document.getElementById('override');
+            BlockFlow.setMotionParam(override.value);
+            myBlock.updateBlock();
+            console.error('Error in getStatusFromControlServer:', error);
+            setTimeout(update, 500); // エラーが発生した場合も0.5秒後に再帰的に update() を呼び出す
+          });
+    }
+    
+    // ブロックフローの更新開始
+    update();
+
+    function readXML() {
+      const file_name = 'blocks1';
+      
+      getTextWithGetFetchReq(3000, `xml/${file_name}.xml`)
+      .then(data => {
+        let xmlDom = Blockly.utils.xml.textToDom(data);
+        Blockly.Xml.domToWorkspace(xmlDom, workspace);
+      })
+      .catch(error => {
+        console.error('Error reading teaching data', error);
+      });
+    }
+
+    function writeXML(){
+      let xmlDom = Blockly.Xml.workspaceToDom(workspace);
+      let xmlText = Blockly.Xml.domToText(xmlDom);
+      sendTextQueryWithPostFetchReq(3000, 'writeXML', xmlText, 'blocks1');
+    }
+
+    // コード生成
+    function getCode() {
+      try{
+        // 生成されたコードの先頭に付加する文字列
+        let line_str = [];
+        let LF = '\n';
+        let INDENT = '  ';
+        line_str.push("# -*- coding : UTF-8 -*-" + LF);
+        line_str.push("import importlib" + LF);
+        line_str.push("import sys, os, time" + LF);
+        line_str.push("from lib.utility.globals import R, MR, LR, CR, T" + LF);
+        line_str.push("from lib.utility.laddar_api import LaddarSeqAPI" + LF);  
+        line_str.push("from lib.utility.functions import getPalletOffset" + LF);  
+        line_str.push(LF);
+        line_str.push("import paho.mqtt.client as mqtt" + LF);  
+        line_str.push("import atexit, json, random" + LF);  
+        line_str.push(LF);
+        line_str.push("current_dir = os.path.dirname(os.path.abspath(__file__))" + LF);
+        line_str.push("sys.path.append(current_dir)" + LF);
+        line_str.push("print(current_dir)" + LF);
+        line_str.push("API_PATH = '/lib/robot/'" + LF);
+        line_str.push("sys.path.append(current_dir + API_PATH)" + LF); 
+        line_str.push("L_web = LaddarSeqAPI(max_R_relay=100, max_MR_relay=100, max_EM_relay=100, max_LR_relay=100, max_T_relay=100, max_C_relay=100)" + LF); 
+        line_str.push("L = LaddarSeqAPI(max_R_relay=100, max_MR_relay=100, max_EM_relay=100, max_LR_relay=100, max_T_relay=100, max_C_relay=100)" + LF); 
+        line_str.push("pallet_settings = {}" + LF); 
+        line_str.push("pallet_offset = [{'x': 0.0, 'y': 0.0, 'z': 0.0} for _ in range(10)]" + LF); 
+        line_str.push("current_pos = {'x': 0.0, 'y': 0.0, 'z': 0.0,'rx': 0.0, 'ry': 0.0, 'rz': 0.0}" + LF); 
+        line_str.push(LF);
+        // MQTTブローカーの設定
+        line_str.push("broker_address = 'localhost'" + LF);
+        line_str.push("port = 1883" + LF);
+        line_str.push("sub_topic = 'control_robot'" + LF);
+        line_str.push("pub_topic = 'feedback_robot'" + LF);
+        line_str.push(LF);
+        line_str.push("def on_message(client, userdata, message):" + LF);
+        line_str.push(INDENT + "recv_msg = message.payload.decode()" + LF);
+        line_str.push(INDENT + "if('runRobot' == recv_msg): " + LF);
+        line_str.push(INDENT + INDENT + "L_web.setRelay('R', 0)" + LF);
+        line_str.push(INDENT + INDENT + "time.sleep(0.1)" + LF);
+        line_str.push(INDENT + INDENT + "L_web.resetRelay('R', 0)" + LF);
+        line_str.push(INDENT + "elif('pauseRobot' == recv_msg): " + LF);
+        line_str.push(INDENT + INDENT + "L_web.setRelay('R', 1)" + LF);
+        line_str.push(INDENT + INDENT + "time.sleep(0.1)" + LF);
+        line_str.push(INDENT + INDENT + "L_web.resetRelay('R', 1)" + LF);
+        line_str.push(INDENT + "elif('getRobotStatus' == recv_msg): " + LF);
+        line_str.push(INDENT + INDENT + "data = {" + LF);
+        line_str.push(INDENT + INDENT + "'MR_relay': L.MR_relay," + LF);
+        line_str.push(INDENT + INDENT + "'R_relay': L.R_relay," + LF);
+        line_str.push(INDENT + INDENT + "'current_pos': current_pos," + LF);
+        line_str.push(INDENT + INDENT + "}" + LF);
+        line_str.push(INDENT + INDENT + "json_data = json.dumps(data)" + LF);
+        line_str.push(INDENT + INDENT + "client.publish(pub_topic, json_data)" + LF);
+        line_str.push(LF);
+        line_str.push("def exit_handler():" + LF);
+        line_str.push(INDENT + "client.loop_stop()" + LF);
+        line_str.push(INDENT + "client.disconnect()" + LF);
+        line_str.push(INDENT + "print('MQTT client disconnected.') " + LF);
+        line_str.push(LF);
+        // MQTTクライアントの設定
+        line_str.push("client_id = f'publish-{random.randint(0, 1000)}'" + LF);
+        line_str.push("client = mqtt.Client(client_id)" + LF);
+        line_str.push("client.on_message = on_message" + LF);
+        line_str.push("client.connect(broker_address, port)" + LF);
+        line_str.push("client.subscribe(sub_topic)" + LF);
+        line_str.push("client.loop_start()" + LF);
+        line_str.push("atexit.register(exit_handler)" + LF);
+        line_str.push(LF);
+        line_str.push("try:" + LF);
+        line_str.push(INDENT + "while True:" + LF);
+        //line_str.push(INDENT + "for i in range(1000):" + LF);
+        line_str.push(INDENT + INDENT + "print('------------ loop ------------')" + LF);
+        line_str.push(INDENT + INDENT + "time.sleep(0.001)" + LF);
+        line_str.push(INDENT + INDENT + "L.updateTime(); # 時間の更新処理" + LF);
+        line_str.push(INDENT + INDENT + "L.R_relay[:50] = L_web.R_relay[:50].copy()" + LF);
+        line_str.push(INDENT + INDENT + "L.ldlg = 0x0    # ブロック用変数" + LF);
+        line_str.push(INDENT + INDENT + "L.aax  = 0x0    # 回路の状態保持変数" + LF);
+        line_str.push(INDENT + INDENT + "L.trlg = 0x0    # ＭＰＳ／ＭＲＤ／ＭＰＰ" + LF);
+        line_str.push(INDENT + INDENT + "L.iix  = 0x01   # ＭＣ用変数の初期化" + LF);  
+        line_str.push(LF);
+        line_str.push(INDENT + INDENT + "#;ボタンランプ" + LF);  
+        line_str.push(INDENT + INDENT + "#;start" + LF);  
+        line_str.push(INDENT + INDENT + "L.LD(CR, 2002)" + LF);  
+        line_str.push(INDENT + INDENT + "L.OUT(R, 5000)" + LF);  
+        line_str.push(INDENT + INDENT + "#;pause" + LF);  
+        line_str.push(INDENT + INDENT + "L.LDP(R, 1)" + LF);  
+        line_str.push(INDENT + INDENT + "L.ANB(R, 5001)" + LF);  
+        line_str.push(INDENT + INDENT + "L.LDPB(R, 1)" + LF);  
+        line_str.push(INDENT + INDENT + "L.AND(R, 5001)" + LF);  
+        line_str.push(INDENT + INDENT + "L.ORL()" + LF);  
+        line_str.push(INDENT + INDENT + "L.OUT(R, 5001)" + LF);  
+        line_str.push(INDENT + INDENT + "L.LDP(R, 5001)" + LF);  
+        line_str.push(INDENT + INDENT + "if (L.aax & L.iix):" + LF);  
+        line_str.push(INDENT + INDENT + INDENT + "RB.stopRobot()" + LF);  
+        line_str.push(LF);
+
+        // ブロックによって再生された文字列
+        myBlock.updateBlock();
+        const generate_code = python.pythonGenerator.workspaceToCode(workspace);
+
+        // 後半
+        let line_str2 = [];
+        line_str2.push(LF);     
+        line_str2.push("except Exception as e:  " + LF);  
+        line_str2.push(INDENT + "client.loop_stop()" + LF);  
+        line_str2.push(INDENT + "client.disconnect()" + LF);  
+        line_str2.push(INDENT + "print('MQTT client disconnected.')" + LF);  
+        line_str2.push(INDENT + "print(e)" + LF);  
+        line_str2.push(LF);     
+
+        // 表示内容更新
+        document.getElementById('content_python').textContent = line_str.join("") + generate_code + line_str2.join("");
+      }
+      catch(e){
+        alert(e);
+      }
+    } 
+    
+  </script>
+</body>
+
+</html>

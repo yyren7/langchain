@@ -1,0 +1,8 @@
+{
+    "api名称": "ModbusClose（立即指令）",
+    "原型": "ModbusClose(index)",
+    "描述": "和Modbus从站断开连接，释放主站。",
+    "参数": "[{\"参数名\":index,\"类型\":int,\"说明\":\"创建主站时返回的主站索引\"}]",
+    "返回": "ErrorID,{},ModbusClose(index);",
+    "示例": "ModbusClose(0)\n# 释放索引为0的Modbus主站。"
+}

@@ -1,0 +1,27 @@
+{
+    "API名称": [
+        "实例化机器人",
+        "查询SDK版本号",
+        "获取控制器IP"
+    ],
+    "API紹介": [
+        "原型：\"RPC(ip)\"，描述：\"实例化一个机器人对象\"，必选参数：\"ip：机器人的IP地址，默认出厂IP为“192.168.58.2”\"，默认参数：\"无\"，",
+        "返回值：\"成功：返回一个机器人对象，失败：创建的对象会被销毁\"",
+
+        "原型：\"GetSDKVersion()\"，描述：\"查询SDK版本号\"，必选参数：\"无\"，默认参数：\"无\"，返回值：\"错误码 成功-0 失败-errcode ",
+        "返回值（调用成功返回） [SDK_version, Controller_version]\"",
+
+        "原型：\"GetControllerIP()\"，描述：\"查询控制器IP\"，必选参数：\"无\"，默认参数：\"无\"，返回值：\"错误码 成功-0 失败- errcode ",
+        "返回值（调用成功返回） ip 控制器IP\""
+    ],
+    "コードサンプル": [
+        "from fairino import Robot\n# 与机器人控制器建立连接，连接成功返回一个机器人对象\n",
+        "robot = Robot.RPC('192.168.58.2')",
+
+        "ret,version = robot.GetSDKVersion() #查询SDK版本号\nif ret ==0:\n    print(\"SDK版本号为\", version )\nelse:\n",
+        "print(\"查询失败，错误码为\",ret)",
+
+        "ret,ip = robot.GetControllerIP() #查询控制器IP\nif ret ==0:\n    print(\"控制器IP为\", ip)\nelse:\n ",
+        "print(\"查询失败，错误码为\",ret)"
+    ]
+}

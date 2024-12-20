@@ -1,0 +1,19 @@
+{
+    "api名称": "SetPayLoad（队列指令）",
+    "原型": "SetPayLoad(weight,inertia)",
+    "描述": "设置机械臂末端负载。",
+    "参数": [
+        {
+            "参数名": "weight",
+            "类型": "float",
+            "说明": "设置负载重量，取值范围不能超过各个型号机器人的负载范围。单位：kg"
+        },
+        {
+            "参数名": "interia",
+            "类型": "float",
+            "说明": "可选参数。负载惯量，单位：kgm²"
+        }
+    ],
+    "返回": "ErrorID,{},SetPayLoad(weight,inertia);",
+    "示例": "SetPayLoad(0.3)\n# 设置末端负载重量为0.3kg。"
+}
