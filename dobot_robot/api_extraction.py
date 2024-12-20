@@ -7,7 +7,6 @@ from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
 import os
 
-os.environ["TAVILY_API_KEY"] = "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"
 
 
 class AgentState(TypedDict):
@@ -75,13 +74,13 @@ prompt = """You are a smart research assistant. Use the search engine to look up
 ## Model
 model = ChatOpenAI(
     model="deepseek-chat",
-    api_key="sk-a5fe39f6088d410784c2c31a5db4cc5f",
+    api_key=os.getenv('DEEPSEEK_API_KEY'),
     base_url="https://api.deepseek.com",
     temperature=0.0
 )
 
 document_model = ChatOpenAI(
-    api_key="sk-ODvoPZ9Heq4sRY34U5TwK2XCrrlbKMhosVSVm6JCxNhQhSuy",
+    api_key=os.getenv('MOONSHOT_API_KEY'),
     base_url="https://api.moonshot.cn/v1",
     temperature=0.0
 )

@@ -5,9 +5,9 @@ import numpy as np
 import json
 
 # 设置 API 密钥
-client2 = OpenAI(api_key="sk-a5fe39f6088d410784c2c31a5db4cc5f", base_url="https://api.deepseek.com")
+client2 = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url="https://api.deepseek.com")
 client1 = OpenAI(
-    api_key="sk-ODvoPZ9Heq4sRY34U5TwK2XCrrlbKMhosVSVm6JCxNhQhSuy",
+    api_key=os.getenv('MOONSHOT_API_KEY'),
     base_url="https://api.moonshot.cn/v1",
 )
 

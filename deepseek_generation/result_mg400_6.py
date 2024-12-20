@@ -67,4 +67,7 @@ if __name__ == "__main__":
     DO = 1
 
     result = pick_and_place(dashboard_p, move_p, feed_p, pos_object, pos_end, DO)
-    print(result)
+
+    while(result):
+        time.sleep(1)
+

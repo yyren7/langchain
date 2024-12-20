@@ -1,7 +1,7 @@
 from openai import OpenAI
 import numpy as np
-
-client2 = OpenAI(api_key="sk-a5fe39f6088d410784c2c31a5db4cc5f", base_url="https://api.deepseek.com")
+import os
+client2 = OpenAI(api_key=os.environ["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
 
 # 把它放进请求中
 

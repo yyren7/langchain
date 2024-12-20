@@ -5,8 +5,8 @@ from pathlib import Path
 from openai import OpenAI
 import numpy as np
 import json
-
-client2 = OpenAI(api_key="sk-a5fe39f6088d410784c2c31a5db4cc5f", base_url="https://api.deepseek.com")
+import os
+client2 = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url="https://api.deepseek.com")
 
 # 把它放进请求中
 content2 = ("该助手通过使用上方提供的api生成机器人控制python代码，开始时启动机器人并且等待两秒，结束时关闭机器人。"

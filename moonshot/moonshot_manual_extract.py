@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 from openai import OpenAI
 import numpy as np
 
 client1 = OpenAI(
-    api_key="sk-ODvoPZ9Heq4sRY34U5TwK2XCrrlbKMhosVSVm6JCxNhQhSuy",
+    api_key=os.getenv('MOONSHOT_API_KEY'),
     base_url="https://api.moonshot.cn/v1",
 )
 

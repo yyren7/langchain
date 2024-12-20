@@ -1,3 +1,5 @@
+import os
+
 from openai import OpenAI
 
 
@@ -11,7 +13,7 @@ def send_messages(messages):
 
 
 client = OpenAI(
-    api_key="sk-a5fe39f6088d410784c2c31a5db4cc5f",
+    api_key=os.getenv('DEEPSEEK_API_KEY'),
     base_url="https://api.deepseek.com",
 )
 
