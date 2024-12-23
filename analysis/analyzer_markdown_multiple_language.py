@@ -14,7 +14,6 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from langchain_google_genai import ChatGoogleGenerativeAI
 from typing import TypedDict, Annotated
 import operator
-import subprocess
 import logging
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from google.api_core.exceptions import ResourceExhausted
@@ -27,21 +26,8 @@ logging.basicConfig(level=logging.INFO)
 allowed_directory = os.path.abspath('C:/')
 max_file_size = 1024 * 1024  # 1MB
 
-# 工具函数：读取文本文件
-@retry(
-    retry=retry_if_exception_type((PermissionError, OSError, UnicodeDecodeError)),
-    wait=wait_exponential(min=1, max=10),
-    stop=stop_after_attempt(3),
-    reraise=True
-)
 
-def detect_encoding(file_path):
-    with open(file_path, 'rb') as f:
-        raw_data = f.read()
-        result = chardet.detect(raw_data)
-        print(f"Detected encoding: {result['encoding']} with confidence {result['confidence']}")
-        return result['encoding']
-
+# 工具函数：检测文件编码
 def detect_encoding_with_bom(file_path):
     with open(file_path, 'rb') as f:
         bom = f.read(4)
@@ -53,6 +39,13 @@ def detect_encoding_with_bom(file_path):
             return 'utf-8'  # Assume UTF-8 without BOM
 
 
+# 工具函数：读取文本文件
+@retry(
+    retry=retry_if_exception_type((PermissionError, OSError, UnicodeDecodeError)),
+    wait=wait_exponential(min=1, max=10),
+    stop=stop_after_attempt(3),
+    reraise=True
+)
 def read_file_tool(file_path: str) -> str:
     abs_path = os.path.abspath(file_path)
     if not abs_path.startswith(allowed_directory):
@@ -70,7 +63,6 @@ def read_file_tool(file_path: str) -> str:
         return content
     except UnicodeDecodeError as e:
         logging.warning(f"UnicodeDecodeError reading {abs_path}: {e}")
-        # 尝试用gbk编码读取
         with open(abs_path, 'r', encoding='gbk') as f:
             content = f.read()
         return content
@@ -78,7 +70,8 @@ def read_file_tool(file_path: str) -> str:
         logging.error(f"Error reading file {abs_path}: {e}")
         return f"Error reading file: {e}"
 
-# 工具函数：读取Python文件的代码内容
+
+# 工具函数：读取Python文件
 @retry(
     retry=retry_if_exception_type((PermissionError, OSError, UnicodeDecodeError)),
     wait=wait_exponential(min=1, max=10),
@@ -102,13 +95,13 @@ def read_python_file_tool(file_path: str) -> str:
         return content
     except UnicodeDecodeError as e:
         logging.warning(f"UnicodeDecodeError reading {abs_path}: {e}")
-        # 尝试用gbk编码读取
         with open(abs_path, 'r', encoding='gbk') as f:
             content = f.read()
         return content
     except Exception as e:
         logging.error(f"Error reading Python file {abs_path}: {e}")
         return f"Error reading Python file: {e}"
+
 
 # 工具函数：读取PDF文件
 @retry(
@@ -133,6 +126,7 @@ def read_pdf_tool(file_path: str) -> str:
         logging.error(f"Error reading PDF file {abs_path}: {e}")
         return f"Error reading PDF file: {e}"
 
+
 # 工具函数：读取Word文档
 @retry(
     retry=retry_if_exception_type((PermissionError, OSError)),
@@ -155,6 +149,7 @@ def read_word_tool(file_path: str) -> str:
     except Exception as e:
         logging.error(f"Error reading Word document {abs_path}: {e}")
         return f"Error reading Word document: {e}"
+
 
 # 定义工具
 read_file = Tool(
@@ -181,6 +176,31 @@ read_word = Tool(
     description="Useful for reading the contents of Word documents. Provide the file path as input."
 )
 
+
+# 工具函数：翻译文本
+def translate_text_tool(text: str, target_language: str) -> str:
+    if target_language not in ['ja', 'zh']:
+        return "Unsupported target language."
+    prompt = f"Translate the following text to {target_language}:\n\n{text}"
+    messages = [
+        SystemMessage(content="You are a professional translator."),
+        HumanMessage(content=prompt)
+    ]
+    try:
+        response = llm.invoke(messages)
+        return response.content
+    except Exception as e:
+        logging.error(f"Translation error: {e}")
+        return "Translation failed."
+
+
+# 定义翻译工具
+translate_tool = Tool(
+    name="translate_text",
+    func=translate_text_tool,
+    description="Useful for translating text to the target language. Provide the text and target language ('ja' for Japanese, 'zh' for Chinese)."
+)
+
 # 定义LLM
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash-exp",
@@ -191,16 +211,18 @@ llm = ChatGoogleGenerativeAI(
     api_key=os.environ["GOOGLE_API_KEY"]
 )
 
+
 # 定义AgentState类型
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
+
 
 # 定义Agent类
 class Agent:
     def __init__(self, model, tools, system="", checkpointer=None):
         self.system = system
         self.analysis_results = {}
-        self.directory_structure = self.traverse_directory('./vast-vision-nocode-tool-analysis')
+        self.directory_structure = self.traverse_directory('./vast-vision-nocode-tool-analysis/nodes_common')
         graph = StateGraph(AgentState)
         graph.add_node("llm", self.call_openai)
         graph.add_node("action", self.take_action)
@@ -252,8 +274,8 @@ class Agent:
     def take_action(self, state: AgentState):
         tool_calls = state['messages'][-1].tool_calls
         if tool_calls:
-            t = tool_calls[0]  # 仅使用第一个工具调用
-            print(f"Calling tool: {t}")
+            t = tool_calls[0]
+            logging.info(f"Calling tool: {t}")
             if t['name'] in self.tools:
                 result = self.tools[t['name']].invoke(t['args'])
             else:
@@ -261,8 +283,29 @@ class Agent:
             results = [ToolMessage(tool_call_id=t['id'], name=t['name'], content=str(result))]
         else:
             results = []
-        print("Back to the model!")
+        logging.info("Back to the model!")
         return {'messages': results}
+
+    def analyze_content(self, content):
+        messages = [
+            SystemMessage(
+                content="You are a professional analyst. Please analyze the following content and provide your insights."),
+            HumanMessage(content=content)
+        ]
+        try:
+            # 使用 stream 方法进行流式输出
+            analysis_result = ""  # 用于累积完整的分析结果
+            for chunk in self.model.stream(messages):  # 逐块处理响应
+                part = chunk.content  # 假设每个 chunk 包含部分响应内容
+                print(part, end='', flush=True)  # 实时输出到控制台
+                analysis_result += part  # 累积完整的分析结果
+        except ResourceExhausted as e:
+            logging.error(f"ResourceExhausted error: {e}")
+            analysis_result = "API quota exhausted. Please try again later."
+        except Exception as e:
+            logging.error(f"An error occurred during analysis: {e}")
+            analysis_result = "An error occurred during analysis."
+        return analysis_result  # 返回累积的完整分析结果
 
     def process_directory(self, directory_struct, parent_path="", current_dict=None):
         if current_dict is None:
@@ -270,15 +313,13 @@ class Agent:
         for key, value in directory_struct.items():
             current_path = os.path.join(parent_path, key)
             if isinstance(value, dict):
-                # 是目录
                 current_dict[key] = {}
                 self.process_directory(value, current_path, current_dict[key])
             else:
-                # 是文件
                 file_path = value
                 abs_file_path = os.path.abspath(file_path)
+                logging.info(f"Processing file: {file_path}")
                 if os.path.isfile(abs_file_path):
-                    # 根据文件类型选择工具
                     tool_name = None
                     if abs_file_path.endswith(('.txt', '.md')):
                         tool_name = "read_file"
@@ -289,24 +330,64 @@ class Agent:
                     elif abs_file_path.endswith('.docx'):
                         tool_name = "read_word_document"
                     if tool_name:
-                        # 调用指定的工具
                         tool = self.tools[tool_name]
-                        result = tool.invoke({'arg1': abs_file_path})
-                        # 存储结果
-                        current_dict[key] = result
+                        tool_result = tool.invoke({'arg1': abs_file_path})
+                        analysis_result = self.analyze_content(tool_result)
+                        current_dict[key] = {
+                            'content': tool_result,
+                            'analysis': analysis_result
+                        }
                     else:
                         current_dict[key] = "Unsupported file type"
                 else:
                     current_dict[key] = "File not found"
 
+    # 新增方法：翻译并保存Markdown文件
+    def translate_and_save(self, file_path, target_language, output_file):
+        # 读取Markdown文件内容
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # 调用翻译工具进行翻译
+        translated_content = self.tools['translate_text'].invoke({
+            'text': content,
+            'target_language': target_language
+        })
+
+        # 保存翻译后的Markdown文件
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(translated_content)
+
+
+# 新增函数：递归生成Markdown文本
+def dict_to_markdown(data, level=0):
+    markdown = ""
+    for key, value in data.items():
+        if isinstance(value, dict):
+            if level == 0:
+                markdown += f"\n# {key}\n"
+            elif level == 1:
+                markdown += f"\n## {key}\n"
+            else:
+                markdown += f"\n{'#' * (level + 1)} {key}\n"
+            markdown += dict_to_markdown(value, level + 1)
+        else:
+            if 'content' in value and 'analysis' in value:
+                markdown += f"\n### {key}\n"
+                markdown += f"**Content:**\n\n```\n{value['content']}\n```\n\n"
+                markdown += f"**Analysis:**\n\n{value['analysis']}\n"
+            else:
+                markdown += f"\n### {key}\n\n{value}\n"
+    return markdown
+
+
 # 设置系统提示
 prompt = """
-You are an agent with access to the ./vast-vision-nocode-tool-analysis/ directory.
 For each file, choose the most appropriate tool to analyze it.
 Only use one tool per file.
 """
 # 创建Agent实例
-tools = [read_file, read_python_file, read_pdf, read_word]
+tools = [read_file, read_python_file, read_pdf, read_word, translate_tool]
 with SqliteSaver.from_conn_string(":memory:") as memory:
     agent = Agent(llm, tools, system=prompt, checkpointer=memory)
     agent.graph.get_graph().draw_mermaid_png(
@@ -314,6 +395,11 @@ with SqliteSaver.from_conn_string(":memory:") as memory:
         draw_method=MermaidDrawMethod.API
     )
     agent.process_directory(agent.directory_structure)
-    # 保存分析结果到JSON文件
-    with open('analysis_results.json', 'w', encoding='utf-8') as f:
-        json.dump(agent.analysis_results, f, ensure_ascii=False, indent=4)
+    # 生成Markdown文本
+    markdown_content = dict_to_markdown(agent.analysis_results)
+    # 保存分析结果到Markdown文件
+    with open('analysis_insights_en.md', 'w', encoding='utf-8') as f:
+        f.write(markdown_content)
+    # 翻译并保存为日语和中文版
+    agent.translate_and_save('analysis_insights_en.md', 'ja', 'analysis_insights_ja.md')
+    agent.translate_and_save('analysis_insights_en.md', 'zh', 'analysis_insights_zh.md')

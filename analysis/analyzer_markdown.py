@@ -172,7 +172,7 @@ read_word = Tool(
 
 # 定义LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-exp-1206",
+    model="gemini-2.0-flash-exp",
     temperature=0,
     max_tokens=None,
     timeout=None,
@@ -309,6 +309,27 @@ class Agent:
                 else:
                     current_dict[key] = "File not found"
 
+# 新增函数：递归生成Markdown文本
+def dict_to_markdown(data, level=0):
+    markdown = ""
+    for key, value in data.items():
+        if isinstance(value, dict):
+            if level == 0:
+                markdown += f"\n# {key}\n"
+            elif level == 1:
+                markdown += f"\n## {key}\n"
+            else:
+                markdown += f"\n{'#' * (level + 1)} {key}\n"
+            markdown += dict_to_markdown(value, level + 1)
+        else:
+            if 'content' in value and 'analysis' in value:
+                markdown += f"\n### {key}\n"
+                markdown += f"**Content:**\n\n```\n{value['content']}\n```\n\n"
+                markdown += f"**Analysis:**\n\n{value['analysis']}\n"
+            else:
+                markdown += f"\n### {key}\n\n{value}\n"
+    return markdown
+
 # 设置系统提示
 prompt = """
 For each file, choose the most appropriate tool to analyze it.
@@ -323,6 +344,8 @@ with SqliteSaver.from_conn_string(":memory:") as memory:
         draw_method=MermaidDrawMethod.API
     )
     agent.process_directory(agent.directory_structure)
-    # 保存分析结果到JSON文件
-    with open('analysis_insights.json', 'w', encoding='utf-8') as f:
-        json.dump(agent.analysis_results, f, ensure_ascii=False, indent=4)
+    # 生成Markdown文本
+    markdown_content = dict_to_markdown(agent.analysis_results)
+    # 保存分析结果到Markdown文件
+    with open('analysis_insights.md', 'w', encoding='utf-8') as f:
+        f.write(markdown_content)

@@ -132,7 +132,7 @@ execute_file = Tool(
 )
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-exp-1206",
+    model="gemini-2.0-flash-exp",
     temperature=0,
     max_tokens=None,
     timeout=None,
