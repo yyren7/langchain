@@ -1,570 +1,771 @@
 はい、以下に翻訳結果を示します。
 
-## vast-vision-nocode-tool-analysis
+# dobot_robot
 
-## nodes_common
+## 結果
 
-### create_dummy.py
+### AccJ_api.json
+
+サポートされていないファイル形式
+
+### AccL_api.json
+
+サポートされていないファイル形式
+
+### Arch_api.json
+
+サポートされていないファイル形式
+
+### Arc_api.json
+
+サポートされていないファイル形式
+
+### CalcTool_api.json
+
+サポートされていないファイル形式
+
+### CalcUser_api.json
+
+サポートされていないファイル形式
+
+### Circle_api.json
+
+サポートされていないファイル形式
+
+### ClearError_api.json
+
+サポートされていないファイル形式
+
+### ContinueScript_api.json
+
+サポートされていないファイル形式
+
+### Continue_api.json
+
+サポートされていないファイル形式
+
+### CP_api.json
+
+サポートされていないファイル形式
+
+### DisableRobot_api.json
+
+サポートされていないファイル形式
+
+### DI_api.json
+
+サポートされていないファイル形式
+
+### dobot_api.py
 
 ### 内容
 
 ```python
-import tempfile
+import socket
+import threading
+from tkinter import Text, END
+import datetime
+import numpy as np
 import os
+import json
 
-def create_dummy(controller):
-    nodenames = controller.get_table_names()
-    inputs_list = [item for item in nodenames if "inputs" in item.lower()]
+alarmControllerFile = "files/alarm_controller.json"
+alarmServoFile = "files/alarm_servo.json"
 
-    with tempfile.NamedTemporaryFile(dir=os.path.dirname(__file__), suffix=".py", delete=False) as temp_file:
-        temp_file_path = temp_file.name
-    # tempファイルに記述
-        for i_name in inputs_list:
-            source_code = f"""
-class {i_name}(NodeBase):
-    pass
-                """
-            with open(temp_file_path, 'a+') as f:
-                f.write(source_code)
-                f.seek(0)
+# ポートフィードバック
+MyType = np.dtype([('len', np.int16,),
+                   ('Reserve', np.int16, (3,)),
+                   ('digital_input_bits', np.int64,),
+                   ('digital_outputs', np.int64,),
+                   ('robot_mode', np.int64,),
+                   ('controller_timer', np.int64,),
+                   ('run_time', np.int64,),
+                   ('test_value', np.int64,),
+                   ('safety_mode', np.float64,),
+                   ('speed_scaling', np.float64,),
+                   ('linear_momentum_norm', np.float64,),
+                   ('v_main', np.float64,),
+                   ('v_robot', np.float64,),
+                   ('i_robot', np.float64,),
+                   ('program_state', np.float64,),
+                   ('safety_status', np.float64,),
+                   ('tool_accelerometer_values', np.float64, (3,)),
+                   ('elbow_position', np.float64, (3,)),
+                   ('elbow_velocity', np.float64, (3,)),
+                   ('q_target', np.float64, (6,)),
+                   ('qd_target', np.float64, (6,)),
+                   ('qdd_target', np.float64, (6,)),
+                   ('i_target', np.float64, (6,)),
+                   ('m_target', np.float64, (6,)),
+                   ('q_actual', np.float64, (6,)),
+                   ('qd_actual', np.float64, (6,)),
+                   ('i_actual', np.float64, (6,)),
+                   ('i_control', np.float64, (6,)),
+                   ('tool_vector_actual', np.float64, (6,)),
+                   ('TCP_speed_actual', np.float64, (6,)),
+                   ('TCP_force', np.float64, (6,)),
+                   ('Tool_vector_target', np.float64, (6,)),
+                   ('TCP_speed_target', np.float64, (6,)),
+                   ('motor_temperatures', np.float64, (6,)),
+                   ('joint_modes', np.float64, (6,)),
+                   ('v_actual', np.float64, (6,)),
+                   ('handtype', np.int8, (4,)),
+                   ('userCoordinate', np.int8, (1,)),
+                   ('toolCoordinate', np.int8, (1,)),
+                   ('isRunQueuedCmd', np.int8, (1,)),
+                   ('isPauseCmdFlag', np.int8, (1,)),
+                   ('velocityRatio', np.int8, (1,)),
+                   ('accelerationRatio', np.int8, (1,)),
+                   ('jerkRatio', np.int8, (1,)),
+                   ('xyzVelocityRatio', np.int8, (1,)),
+                   ('rVelocityRatio', np.int8, (1,)),
+                   ('xyzAccelerationRatio', np.int8, (1,)),
+                   ('rAccelerationRatio', np.int8, (1,)),
+                   ('xyzJerkRatio', np.int8, (1,)),
+                   ('rJerkRatio', np.int8, (1,)),
+                   ('BrakeStatus', np.int8, (1,)),
+                   ('EnableStatus', np.int8, (1,)),
+                   ('DragStatus', np.int8, (1,)),
+                   ('RunningStatus', np.int8, (1,)),
+                   ('ErrorStatus', np.int8, (1,)),
+                   ('JogStatus', np.int8, (1,)),
+                   ('RobotType', np.int8, (1,)),
+                   ('DragButtonSignal', np.int8, (1,)),
+                   ('EnableButtonSignal', np.int8, (1,)),
+                   ('RecordButtonSignal', np.int8, (1,)),
+                   ('ReappearButtonSignal', np.int8, (1,)),
+                   ('JawButtonSignal', np.int8, (1,)),
+                   ('SixForceOnline', np.int8, (1,)),  # 1037
+                   ('Reserve2', np.int8, (82,)),
+                   ('m_actual[6]', np.float64, (6,)),
+                   ('load', np.float64, (1,)),
+                   ('centerX', np.float64, (1,)),
+                   ('centerY', np.float64, (1,)),
+                   ('centerZ', np.float64, (1,)),
+                   ('user', np.float64, (6,)),
+                   ('tool', np.float64, (6,)),
+                   ('traceIndex', np.int64,),
+                   ('SixForceValue', np.int64, (6,)),
+                   ('TargetQuaternion', np.float64, (4,)),
+                   ('ActualQuaternion', np.float64, (4,)),
+                   ('Reserve3', np.int8, (24,)),
+                   ])
 
-    return temp_file_path
-```
 
-### 分析
+# コントローラーとサーボのアラームファイルを読み込む
+def alarmAlarmJsonFile():
+    currrntDirectory = os.path.dirname(__file__)
+    jsonContrellorPath = os.path.join(currrntDirectory, alarmControllerFile)
+    jsonServoPath = os.path.join(currrntDirectory, alarmServoFile)
 
-このPythonコードは、一時的なPythonファイルを生成する関数`create_dummy`を定義しています。コントローラーからテーブル名を取得し、"inputs"を含むものをフィルタリングし、一致する名前ごとに一時ファイル内にPythonクラスを作成します。この関数は、この一時ファイルへのパスを返します。基本的に、入力テーブル名に基づいてPythonコードを動的に生成します。
+    with open(jsonContrellorPath, encoding='utf-8') as f:
+        dataController = json.load(f)
+    with open(jsonServoPath, encoding='utf-8') as f:
+        dataServo = json.load(f)
+    return dataController, dataServo
 
-### gui.py
 
-### 内容
+class DobotApi:
+    def __init__(self, ip, port, *args):
+        self.ip = ip
+        self.port = port
+        self.socket_dobot = 0
+        self.__globalLock = threading.Lock()
+        self.text_log: Text = None
+        if args:
+            self.text_log = args[0]
 
-```python
-import re
-from ryven.gui_env import *
-#from special_nodes import *
+        if self.port == 29999 or self.port == 30003 or self.port == 30004:
+            try:
+                self.socket_dobot = socket.socket()
+                self.socket_dobot.connect((self.ip, self.port))
+            except socket.error:
+                print(socket.error)
+                raise Exception(
+                    f"ポート {self.port} を使用してソケット接続を設定できません！", socket.error)
+        else:
+            raise Exception(
+                f"ダッシュボードサーバーに接続するには、ポート {self.port} を使用する必要があります！")
 
-from qtpy.QtGui import QFont
-from qtpy.QtCore import Qt, Signal, QEvent
-from qtpy.QtWidgets import QPushButton, QComboBox, QSlider, QTextEdit, QPlainTextEdit, QWidget, QVBoxLayout, QLineEdit, \
-    QDialog, QMessageBox
+    def log(self, text):
+        if self.text_log:
+            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S ")
+            self.text_log.insert(END, date + text + "\n")
+        else:
+            print(text)
 
-# QLineEditのシンプルな入力GUI
-class BasicInputWidget(NodeInputWidget, QLineEdit):
-    def __init__(self, params):
-        NodeInputWidget.__init__(self, params)
-        QLineEdit.__init__(self)
-
-        self.setMinimumWidth(60)
-        self.setMaximumWidth(100)
-        self.setStyleSheet("background-color:black;")
-
-        ## loadしたとき毎回発火してしまう->silent=Trueで解決
-        self.textChanged.connect(lambda: self.text_changed())
-        self.init_value()
-
-    def text_changed(self):
-        self.update_node_input(Data(self.text()), silent=True)
-
-    def get_state(self) -> dict:
-        return {'value': self.text()}
-
-    def set_state(self, data: dict):
+    def send_data(self, string):
         try:
-            self.setText(data['value'])
-        except:
-            pass
-
-    def val_update_event(self, val: Data):
-        try:
-            super().val_update_event(val)
-            # 値を取得（画像のパス）
-            data = val.payload
-            self.setText(str(data))
-        except:
-            pass
-
-    def init_value(self):
-        # input the default value
-        self.set_state({"value": self.input.default})
-"""
-    generic base classes
-"""
-
-# 入力部にQLineEditが付いたGUI
-class BasicNodeGui(NodeGUI):
-    input_widget_classes = {'input': BasicInputWidget}
-
-    def add_input(self, name):
-        self.init_input_widgets[len(self.init_input_widgets)] = {'name':'input', 'pos':'below'}
-
-    def __init__(self, params):
-        super().__init__(params)
-
-        for inp in self.node.inputs:
-            self.input_widgets[inp] = {'name': 'input', 'pos': 'besides'}
-
-
-"""
-    operator nodes
-"""
-## 以下はryvenにもともと載っていたサンプルコード（参考）
-class GuiBase(NodeGUI):
-    pass
-
-class OperatorNodeBaseGui(GuiBase):
-    input_widget_classes = {
-        'in': inp_widgets.Builder.evaled_line_edit(size='s', resizing=True),
-    }
-    # init_input_widgets = {
-    #     0: {'name': 'in', 'pos': 'besides'},
-    #     1: {'name': 'in', 'pos': 'besides'},
-    # }
-    style = 'small'
-
-    def __init__(self, params):
-        super().__init__(params)
-        self.actions['add input'] = {'method': self.add_operand_input}
-        self.actions['remove input'] = {}
-
-        for inp in self.node.inputs:
-            self.input_widgets[inp] = {'name': 'in', 'pos': 'besides'}
-
-    def initialized(self):
-        super().initialized()
-        self.rebuild_remove_actions()
-
-    def add_operand_input(self):
-        self.register_new_operand_input(self.node.num_inputs + 1)
-        self.node.add_op_input()
-
-    def register_new_operand_input(self, index):
-        self.actions[f'remove input'][f'{index}'] = {
-            'method': self.remove_operand_input,
-            'data': index
-        }
-
-    def remove_operand_input(self, index):
-        self.node.remove_op_input(index)
-        self.rebuild_remove_actions()
-
-    def rebuild_remove_actions(self):
-        try:
-            self.actions['remove input'] = {}
-            for i in range(self.node.num_inputs):
-                self.actions[f'remove input'][f'{i}'] = \
-                    {'method': self.remove_operand_input, 'data': i}
+            self.log(f"{self.ip}:{self.port} に送信: {string}")
+            self.socket_dobot.send(str.encode(string, 'utf-8'))
         except Exception as e:
             print(e)
 
-
-
-export_guis([
-    # DualNodeBaseGui,
-    #
-    # CheckpointNodeGui,
-    # OperatorNodeBaseGui,
-    BasicNodeGui
-    # LogicNodeBaseGui,
-    # ArithNodeBaseGui,
-    # CompNodeBaseGui,
-    #
-    # CSNodeBaseGui,
-    # ForLoopGui,
-    # ForEachLoopGui,
-    #
-    # SpecialNodeGuiBase,
-    # ButtonNodeGui,
-    # ClockNodeGui,
-    # LogNodeGui,
-    # SliderNodeGui,
-    # DynamicPortsGui,
-    # ExecNodeGui,
-    # EvalNodeGui,
-    # InterpreterConsoleGui,
-    # StorageNodeGui,
-    # LinkIN_NodeGui,
-    # LinkOUT_NodeGui,
-])
-```
-
-### 分析
-
-このコードは、Ryvenと呼ばれるノードベースのビジュアルプログラミング環境用のカスタムGUI要素を定義しています。シンプルなテキスト入力用の`BasicInputWidget`と、そのような入力を持つノードのベースとなる`BasicNodeGui`を導入しています。また、入力ポートを動的に追加および削除できる`OperatorNodeBaseGui`も含まれています。このコードは、入力ウィジェットを設定し、それらの状態を管理し、ノードデータに接続します。また、これらのカスタムGUIをRyven環境内で使用するためにエクスポートします。
-
-### nodes.py
-
-### 内容
-
-```python
-from ryven.node_env import *
-import sys
-import os
-sys.path.append(os.path.dirname(__file__))
-import node_from_db
-import create_dummy
-import tempfile
-import atexit
-
-script_path = os.path.abspath(__file__)
-parent_dir = os.path.dirname(os.path.dirname(script_path))
-sys.path.insert(0, parent_dir)
-from database_lib import redis_lib_client
-from vastlib.utils import read_json
-
-def remove_temp(path):
-    if os.path.exists(path):  # if file is existing then delete it
-        os.remove(path)
-
-# TODO: db configuration is read by config file (not hard cording)
-# config = read_json("config/config.json")
-# DATABASE_URL = config["db_url"]
-# controller = db_lib.db_controller(DATABASE_URL)
-controller = redis_lib_client.db_controller()
-
-dummy_path = create_dummy.create_dummy(controller)
-# delete dummy file when program ends
-atexit.register(remove_temp, path=dummy_path)
-
-# source code for dynamic class from metadata
-with open(node_from_db.__file__, 'r') as f:
-    node_from_db_code = f.read()
-
-# dummy code for dynamic class
-with open(dummy_path, 'r') as f:
-    dummy_code = f.read()
-
-# dummy file path (debug)
-#path = os.path.dirname(os.path.abspath(__file__)) + "\\temp.py"
-
-# merge dynamic class file and dummy class file
-#with open(path, 'w+') as fw:
-with tempfile.NamedTemporaryFile(dir=os.path.dirname(__file__), suffix=".py", delete=False) as temp_file:
-    temp_file_path = temp_file.name
-    with open(temp_file_path, 'a+') as fw:
-        fw.write(node_from_db_code)
-        fw.write(dummy_code)
-        fw.seek(0)
-
-atexit.register(remove_temp, path=temp_file_path)
-
-file_path = os.path.dirname(temp_file_path)
-sys.path.append(file_path)
-
-# import merged file
-mdl = __import__(os.path.basename(temp_file_path[:-3]), fromlist=['*'])
-
-# export custom nodes
-export_nodes([
-    *mdl.get_nodes()
-])
-```
-
-### 分析
-
-このPythonスクリプトは、ビジュアルプログラミング環境（Ryven）用のカスタムノードを動的に作成およびロードします。`node_from_db.py`と動的に生成されたダミーファイルからコードを読み取り、それらを一時ファイルにマージしてモジュールとしてインポートします。このスクリプトは、Redisデータベースクライアントを使用し、`create_dummy.py`を使用してダミーファイルを作成し、プログラム終了時に一時ファイルが削除されるようにします。最後に、`export_nodes`を使用してカスタムノードをエクスポートします。
-
-### node_from_db.py
-
-### 内容
-
-```python
-from ryven.node_env import *
-import sys
-import os
-import time
-from time import sleep
-from copy import copy, deepcopy
-from PySide2.QtCore import Signal, QObject, QThread
-from database_lib import redis_lib_client
-from functools import partial
-
-script_path = os.path.abspath(__file__)
-parent_dir = os.path.dirname(os.path.dirname(script_path))
-sys.path.insert(0, parent_dir)
-
-guis = import_guis(__file__)
-globalcount = 0
-class NodeBase(Node):
-    color = '#00a6ff'
-
-class BasicNode(NodeBase):
-    version = 'v0.1'
-    title = 'base'
-    name = 'base'
-    counter = 0
-    message = {}
-    _FUNC = None
-
-    INSTANCES = []
-    controller = None
-
-    def __init__(self, params):
-        super().__init__(params)
-        self.activate = True
-        global comm
-        self.comm = comm
-        self.message_recv_slot = partial(self.get_message, self)
-        self.connect = False
-
-    def __start(self):
-        if not self.connect:
-            self.comm.recv_signal.connect(self.message_recv_slot)
-            self.connect = True
-
-    def __stop(self):
-        if self.connect:
-            self.comm.recv_signal.disconnect(self.message_recv_slot)
-            self.connect = False
-
-    def have_gui(self):
-        return hasattr(self, 'gui')
-
-    def get_message(self, _self, _recv_message):
-        recv_message = _recv_message
-
+    def wait_reply(self):
+        """
+    戻り値を読み取る
+    """
+        data = ""
         try:
-            obj_name, id_num = recv_message.split(":")
+            data = self.socket_dobot.recv(1024)
         except Exception as e:
-            # if message format is not correct, continue recv
-            return
+            print(e)
 
-        if "Errors" in obj_name:
-            # check error message
-            ret = self.check_err(obj_name, id_num, self.message)
-            # if "module" and "id" in error message are matched, stop recv
-            try:
-                if ret:
-                    self.gui.set_display_title(self.title + "(err)")
-                    self.__stop()
-                    # display log on headless gui
-                    if self._FUNC is not None:
-                        self._FUNC(self.name[:-6], "Error")
-                    return
-                else:
-                    return
-            except:
-                pass
-
-
-        # check name and id
-        if (obj_name[:-7] == self.name[:-6] and int(id_num) == int(self.message["id"])):
-            # if name and id is correct, stop recv
-            self.__stop()
-            pass
-        else:
-            return
-
-        # get result record
-        record_dict = self.controller.get_record_client(obj_name, id_num)
-        # write recode to output ports
-        for i, outp in enumerate(self.outputs):
-            if outp.type_ == "exec":
-                continue
-            self.set_output_val(i, Data(record_dict[outp.label_str]))
-
-        # exec flow
-        try:
-            self.gui.set_display_title(self.title)
-        except:
-            pass
-        # display log on headless gui
-        if self._FUNC is not None:
-            self._FUNC(self.name[:-6], "Done")
-        self.exec_output(0)
-
-
-
-    # main function of nodes
-    def update_event(self, inp_num=-1):
-        # update only for exec flow
-        if inp_num == 0:
-            # reset input port color
-            self.reset_color()
-            # check id
-            self.counter = self.controller.check_key(self.title + "Inputs", self.counter)
-            # create message
-            message = {"id": copy(self.counter)}
-            self.counter += 1
-            for i, inp in enumerate(self.inputs):
-                if inp.type_ == "exec":
-                    continue
-                try:
-                    if self.input(i).payload != "None":
-                        message[inp.label_str] = self.input(i).payload
-                except:
-                    pass
-
-            self.message = deepcopy(message)
-
-            self.__stop()
-            self.__start()
-
-            res = self.controller.set_record_and_notify_client(self.title + "Inputs",
-                                                               message,
-                                                               "input",
-                                                               message["id"]
-            )
-            try:
-                self.gui.set_display_title(self.title + "<<<")
-            except:
-                pass
-
-            if self._FUNC is not None:
-                self._FUNC(self.name[:-6], "start")
-
-    def check_err(self, obj_name, id_num, send_message):
-        # get result record
-        try:
-            record_dict = self.controller.get_record_client(obj_name, id_num)
-            if record_dict["input_id"] == send_message["id"] and self.title in record_dict["module"]:
-                if obj_name == "FlowErrors":
-                    for name in record_dict["message"]:
-                        for num, input in enumerate(self.inputs):
-                            if num == 0:
-                                continue
-                            if name == input.label_str:
-                                self.gui.input_widget(num).setStyleSheet("background-color:red;")
-                return True
+        finally:
+            if len(data) == 0:
+                data_str = data
             else:
-                return False
-        except:
-            return False
+                data_str = str(data, encoding="utf-8")
+                self.log(f'{self.ip}:{self.port} から受信: {data_str}')
+            return data_str
 
-    def reset_color(self):
-        try:
-            for i in range(len(self.gui.input_widgets)):
-                if i == 0:
-                    continue
-                self.gui.input_widget(i).setStyleSheet("background-color:black;")
-        except:
-            pass
+    def close(self):
+        """
+    ポートを閉じる
+    """
+        if (self.socket_dobot != 0):
+            self.socket_dobot.close()
 
-
-# matching xxinputs and xxoutputs
-def extract_nodenames(names):
-    inputs_list = [item for item in names if "inputs" in item.lower()]
-    results_list = [item for item in names if "outputs" in item.lower()]
-
-    mapping = {}
-    for item in inputs_list:
-        prefix = item[:-6]
-        matching_result = [result for result in results_list if result.startswith(prefix)]
-        if matching_result:
-            mapping[item] = matching_result[0]
-
-    return mapping
-
-def get_nodes():
-    controller = redis_lib_client.db_controller()
-    nodenames = controller.get_table_names()
-    io_pairs = extract_nodenames(nodenames)
-    _nodes = []
-
-    # create node class
-    for i, (i_name, r_name) in enumerate(io_pairs.items()):
-        i_columns = controller.get_columns(i_name)
-        r_columns = controller.get_columns(r_name)
-
-        cls = type(i_name, (BasicNode,), {})
-
-        init_record = controller.get_record_client(table_name=i_name, record_id=0)
-
-        cls.name = i_name
-        cls.title = i_name[:-6]
-
-        node_inputs = [NodeInputType(type_='exec')]
-        node_outputs = [NodeOutputType(type_='exec')]
-
-        for i, i_column in enumerate(i_columns):
-            if i_column["name"] != "id" and i_column["name"] != "date":
-                if type(init_record) == dict:
-                        try:
-                            node_inputs.append(NodeInputType(i_column["name"], default=str(init_record[i_column["name"]])))
-                        except:
-                            node_inputs.append(NodeInputType(i_column["name"]))
-                else:
-                    node_inputs.append(NodeInputType(i_column["name"]))
-        for i, r_column in enumerate(r_columns):
-            if r_column["name"] != "id" and r_column["name"] != "date":
-                node_outputs.append(NodeOutputType(r_column["name"]))
-        cls.init_inputs = node_inputs
-        cls.init_outputs = node_outputs
-
-        cls.num_inputs = len(i_columns)
-        # cls.GUI = guis.OperatorNodeBaseGui
-        cls.GUI = guis.BasicNodeGui
-
-        # TODO:this inplementation may be bad.
-        cls.controller = controller
-
-        _nodes.append(cls)
-
-    return _nodes
-
-class Communicate(QObject):
-    # カスタムシグナルの定義
-    recv_signal = Signal(str)
-    def __init__(self, controller):
-        super().__init__()
-        self.thread = listen_thread(controller)
-        self.thread.message_signal.connect(lambda v: self._notification(v))
-
-    def _start(self):
-        self.thread.running = True
-        self.thread.start()
-        while not self.thread.isRunning():
-            time.sleep(0.001)
-
-    def _stop(self):
-        self.thread.stop()
-        self.thread.wait()
-
-    def _notification(self, message):
-        self.recv_signal.emit(message)
+    def sendRecvMsg(self, string):
+        """
+    送受信同期
+    """
+        with self.__globalLock:
+            self.send_data(string)
+            recvData = self.wait_reply()
+            return recvData
 
     def __del__(self):
-        self._stop()
+        self.close()
 
-class listen_thread(QThread):
-    message_signal = Signal(str)
-    def __init__(self, controller):
-        super().__init__()
-        self.running = True
-        self.controller = controller
 
-    def run(self):
-        while self.running:
-            try:
-                sleep(0.001)
-                recv_message = self.controller._listen_message(channels=["output", "error"],
-                                                              timeout=0
-                                                              )
-                if recv_message is not None:
-                    self.message_signal.emit(recv_message)
-                    continue
-                else:
-                    continue
-            except:
-                continue
+class DobotApiDashboard(DobotApi):
+    """
+  Dobotへの接続を確立するためのクラスdobot_api_dashboardを定義します
+  """
 
-        return
+    def EnableRobot(self, *dynParams):
+        """
+    ロボットを有効にする
+    """
+        string = "EnableRobot("
+        for i in range(len(dynParams)):
+            if i == len(dynParams) - 1:
+                string = string + str(dynParams[i])
+            else:
+                string = string + str(dynParams[i]) + ","
+        string = string + ")"
+        return self.sendRecvMsg(string)
 
-    def set_controller(self, controller):
-        self.controller = controller
+    def DisableRobot(self):
+        """
+    ロボットを無効にする
+    """
+        string = "DisableRobot()"
+        return self.sendRecvMsg(string)
 
-    def stop(self):
-        self.running = False
+    def ClearError(self):
+        """
+    コントローラーのアラーム情報をクリアする
+    """
+        string = "ClearError()"
+        return self.sendRecvMsg(string)
 
-controller = redis_lib_client.db_controller()
-comm = Communicate(controller)
-comm._start()
-```
+    def ResetRobot(self):
+        """
+    ロボットを停止する
+    """
+        string = "ResetRobot()"
+        return self.sendRecvMsg(string)
 
-### 分析
+    def SpeedFactor(self, speed):
+        """
+    グローバルレートを設定する
+    speed:レート値（値の範囲：1〜100）
+    """
+        string = "SpeedFactor({:d})".format(speed)
+        return self.sendRecvMsg(string)
 
-このコードは、Redisデータベースと対話するノードを作成および管理するためのシステムを定義しています。基本的なノード、通信、およびリスナースレッドのクラスが含まれています。ノードはデータベースのテーブル名に基づいて動的に生成され、入力と出力はテーブルの列に対応します。このシステムは、ノード間の通信にシグナルとスロットを使用し、データベースの変更に基づいてノードの状態を更新します。また、エラーメッセージを処理し、ノードの対話のための基本的なGUIを提供します。このコードは、Redisデータベースへの接続を確立し、ノードが対話するための通信システムを設定します。
+    def User(self, index):
+        """
+    キャリブレーションされたユーザー座標系を選択する
+    index : キャリブレーションされたユーザー座標のインデックス
+    """
+        string = "User({:d})".format(index)
+        return self.sendRecvMsg(string)
 
-## nodes_common\calculation_nodes
+    def Tool(self, index):
+        """
+    キャリブレーションされたツール座標系を選択する
+    index : キャリブレーションされたツール座標のインデックス
+    """
+        string = "Tool({:d})".format(index)
+        return self.sendRecvMsg(string)
 
-（このセクションは空なので、翻訳は不要です。）
+    def RobotMode(self):
+        """
+    ロボットの状態を表示する
+    """
+        string = "RobotMode()"
+        return self.sendRecvMsg(string)
+
+    def PayLoad(self, weight, inertia):
+        """
+    ロボットの負荷を設定する
+    weight : 負荷重量
+    inertia: 負荷慣性モーメント
+    """
+        string = "PayLoad({:f},{:f})".format(weight, inertia)
+        return self.sendRecvMsg(string)
+
+    def DO(self, index, status):
+        """
+    デジタル信号出力を設定する（キュー命令）
+    index : デジタル出力インデックス（値の範囲：1〜24）
+    status : デジタル信号出力ポートの状態（0：ローレベル、1：ハイレベル）
+    """
+        string = "DO({:d},{:d})".format(index, status)
+        return self.sendRecvMsg(string)
+
+    def AccJ(self, speed):
+        """
+    ジョイント加速度比を設定する（MovJ、MovJIO、MovJR、JointMovJコマンドのみ）
+    speed : ジョイント加速度比（値の範囲：1〜100）
+    """
+        string = "AccJ({:d})".format(speed)
+        return self.sendRecvMsg(string)
+
+    def AccL(self, speed):
+        """
+    座標系の加速度比を設定する（MovL、MovLIO、MovLR、Jump、Arc、Circleコマンドのみ）
+    speed : 直交座標加速度比（値の範囲：1〜100）
+    """
+        string = "AccL({:d})".format(speed)
+        return self.sendRecvMsg(string)
+
+    def SpeedJ(self, speed):
+        """
+    ジョイント速度比を設定する（MovJ、MovJIO、MovJR、JointMovJコマンドのみ）
+    speed : ジョイント速度比（値の範囲：1〜100）
+    """
+        string = "SpeedJ({:d})".format(speed)
+        return self.sendRecvMsg(string)
+
+    def SpeedL(self, speed):
+        """
+    直交座標加速度比を設定する（MovL、MovLIO、MovLR、Jump、Arc、Circleコマンドのみ）
+    speed : 直交座標加速度比（値の範囲：1〜100）
+    """
+        string = "SpeedL({:d})".format(speed)
+        return self.sendRecvMsg(string)
+
+    def Arch(self, index):
+        """
+    ジャンプゲートパラメータインデックスを設定する（このインデックスには、開始点のリフト高さ、最大リフト高さ、終了点のドロップ高さが含まれます）
+    index : パラメータインデックス（値の範囲：0〜9）
+    """
+        string = "Arch({:d})".format(index)
+        return self.sendRecvMsg(string)
+
+    def CP(self, ratio):
+        """
+    スムーズな遷移比を設定する
+    ratio : スムーズな遷移比（値の範囲：1〜100）
+    """
+        string = "CP({:d})".format(ratio)
+        return self.sendRecvMsg(string)
+
+    def LimZ(self, value):
+        """
+    ドアタイプのパラメータの最大リフト高さを設定する
+    value : 最大リフト高さ（高度に制限されています：マニピュレーターのz軸の制限位置を超えないでください）
+    """
+        string = "LimZ({:d})".format(value)
+        return self.sendRecvMsg(string)
+
+    def RunScript(self, project_name):
+        """
+    スクリプトファイルを実行する
+    project_name ：スクリプトファイル名
+    """
+        string = "RunScript({:s})".format(project_name)
+        return self.sendRecvMsg(string)
+
+    def StopScript(self):
+        """
+    スクリプトを停止する
+    """
+        string = "StopScript()"
+        return self.sendRecvMsg(string)
+
+    def PauseScript(self):
+        """
+    スクリプトを一時停止する
+    """
+        string = "PauseScript()"
+        return self.sendRecvMsg(string)
+
+    def ContinueScript(self):
+        """
+    スクリプトの実行を継続する
+    """
+        string = "ContinueScript()"
+        return self.sendRecvMsg(string)
+
+    def GetHoldRegs(self, id, addr, count, type=None):
+        """
+    保持レジスタを読み取る
+    id : セカンダリデバイス番号（最大5つのデバイスをサポートできます。値の範囲は0〜4です
+        コントローラーの内部スレーブにアクセスする場合は0に設定します）
+    addr : レジスタの開始アドレスを保持します（値の範囲：3095〜4095）
+    count : 指定された数のデータ型を読み取ります（値の範囲：1〜16）
+    type : データ型
+        nullの場合、デフォルトで16ビット符号なし整数（2バイト、1レジスタを占有）が読み取られます
+        "U16" : 16ビット符号なし整数（2バイト、1レジスタを占有）を読み取ります
+        "U32" : 32ビット符号なし整数（4バイト、2レジスタを占有）を読み取ります
+        "F32" : 32ビット単精度浮動小数点数（4バイト、2レジスタを占有）を読み取ります
+        "F64" : 64ビット倍精度浮動小数点数（8バイト、4レジスタを占有）を読み取ります
+    """
+        if type is not None:
+            string = "GetHoldRegs({:d},{:d},{:d},{:s})".format(
+                id, addr, count, type)
+        else:
+            string = "GetHoldRegs({:d},{:d},{:d})".format(
+                id, addr, count)
+        return self.sendRecvMsg(string)
+
+    def SetHoldRegs(self, id, addr, count, table, type=None):
+        """
+    保持レジスタを書き込む
+    id : セカンダリデバイス番号（最大5つのデバイスをサポートできます。値の範囲は0〜4です
+        コントローラーの内部スレーブにアクセスする場合は0に設定します）
+    addr : レジスタの開始アドレスを保持します（値の範囲：3095〜4095）
+    count : 指定された数のデータ型を書き込みます（値の範囲：1〜16）
+    type : データ型
+        nullの場合、デフォルトで16ビット符号なし整数（2バイト、1レジスタを占有）が読み取られます
+        "U16" : 16ビット符号なし整数（2バイト、1レジスタを占有）を読み取ります
+        "U32" : 32ビット符号なし整数（4バイト、2レジスタを占有）を読み取ります
+        "F32" : 32ビット単精度浮動小数点数（4バイト、2レジスタを占有）を読み取ります
+        "F64" : 64ビット倍精度浮動小数点数（8バイト、4レジスタを占有）を読み取ります
+    """
+        if type is not None:
+            string = "SetHoldRegs({:d},{:d},{:d},{:d})".format(
+                id, addr, count, table)
+        else:
+            string = "SetHoldRegs({:d},{:d},{:d},{:d},{:s})".format(
+                id, addr, count, table, type)
+        return self.sendRecvMsg(string)
+
+    def GetErrorID(self):
+        """
+    ロボットのエラーコードを取得する
+    """
+        string = "GetErrorID()"
+        return self.sendRecvMsg(string)
+
+    def DOExecute(self, offset1, offset2):
+        string = "DOExecute({:d},{:d}".format(offset1, offset2) + ")"
+        return self.sendRecvMsg(string)
+
+    def ToolDO(self, offset1, offset2):
+        string = "ToolDO({:d},{:d}".format(offset1, offset2) + ")"
+        return self.sendRecvMsg(string)
+
+    def ToolDOExecute(self, offset1, offset2):
+        string = "ToolDOExecute({:d},{:d}".format(offset1, offset2) + ")"
+        return self.sendRecvMsg(string)
+
+    def SetArmOrientation(self, offset1):
+        string = "SetArmOrientation({:d}".format(offset1) + ")"
+        return self.sendRecvMsg(string)
+
+    def SetPayload(self, offset1, *dynParams):
+        string = "SetPayload({:f}".format(
+            offset1)
+        for params in dynParams:
+            string = string + "," + str(params) + ","
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def PositiveSolution(self, offset1, offset2, offset3, offset4, user, tool):
+        string = "PositiveSolution({:f},{:f},{:f},{:f},{:d},{:d}".format(offset1, offset2, offset3, offset4, user,
+                                                                         tool) + ")"
+        return self.sendRecvMsg(string)
+
+    def InverseSolution(self, offset1, offset2, offset3, offset4, user, tool, *dynParams):
+        string = "InverseSolution({:f},{:f},{:f},{:f},{:d},{:d}".format(offset1, offset2, offset3, offset4, user, tool)
+        for params in dynParams:
+            print(type(params), params)
+            string = string + repr(params)
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def SetCollisionLevel(self, offset1):
+        string = "SetCollisionLevel({:d}".format(offset1) + ")"
+        return self.sendRecvMsg(string)
+
+    def GetAngle(self):
+        string = "GetAngle()"
+        return self.sendRecvMsg(string)
+
+    def GetPose(self):
+        string = "GetPose()"
+        return self.sendRecvMsg(string)
+
+    def EmergencyStop(self):
+        string = "EmergencyStop()"
+        return self.sendRecvMsg(string)
+
+    def ModbusCreate(self, ip, port, slave_id, isRTU):
+        string = "ModbusCreate({:s},{:d},{:d},{:d}".format(ip, port, slave_id, isRTU) + ")"
+        return self.sendRecvMsg(string)
+
+    def ModbusClose(self, offset1):
+        string = "ModbusClose({:d}".format(offset1) + ")"
+        return self.sendRecvMsg(string)
+
+    def GetInBits(self, offset1, offset2, offset3):
+        string = "GetInBits({:d},{:d},{:d}".format(offset1, offset2, offset3) + ")"
+        return self.sendRecvMsg(string)
+
+    def GetInRegs(self, offset1, offset2, offset3, *dynParams):
+        string = "GetInRegs({:d},{:d},{:d}".format(offset1, offset2, offset3)
+        for params in dynParams:
+            print(type(params), params)
+            string = string + params[0]
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def GetCoils(self, offset1, offset2, offset3):
+        string = "GetCoils({:d},{:d},{:d}".format(offset1, offset2, offset3) + ")"
+        return self.sendRecvMsg(string)
+
+    def SetCoils(self, offset1, offset2, offset3, offset4):
+        string = "SetCoils({:d},{:d},{:d}".format(offset1, offset2, offset3) + "," + repr(offset4) + ")"
+        print(str(offset4))
+        return self.sendRecvMsg(string)
+
+    def DI(self, offset1):
+        string = "DI({:d}".format(offset1) + ")"
+        return self.sendRecvMsg(string)
+
+    def ToolDI(self, offset1):
+        string = "DI({:d}".format(offset1) + ")"
+        return self.sendRecvMsg(string)
+
+    def DOGroup(self, *dynParams):
+        string = "DOGroup("
+        for params in dynParams:
+            string = string + str(params) + ","
+        string = string + ")"
+        return self.wait_reply()
+
+    def BrakeControl(self, offset1, offset2):
+        string = "BrakeControl({:d},{:d}".format(offset1, offset2) + ")"
+        return self.sendRecvMsg(string)
+
+    def StartDrag(self):
+        string = "StartDrag()"
+        return self.sendRecvMsg(string)
+
+    def StopDrag(self):
+        string = "StopDrag()"
+        return self.sendRecvMsg(string)
+
+    def LoadSwitch(self, offset1):
+        string = "LoadSwitch({:d}".format(offset1) + ")"
+        return self.sendRecvMsg(string)
+
+    def wait(self,t):
+        string = "wait({:d}".format(t)+")"
+        return self.sendRecvMsg(string)
+
+    def pause(self):
+        string = "pause()"
+        return self.sendRecvMsg(string)
+
+    def Continue(self):
+        string = "continue()"
+        return self.sendRecvMsg(string)
+
+
+class DobotApiMove(DobotApi):
+    """
+  Dobotへの接続を確立するためのクラスdobot_api_moveを定義します
+  """
+
+    def MovJ(self, x, y, z, r, *dynParams):
+        """
+    ジョイントモーションインターフェース（点対点モーションモード）
+    x: 直交座標系のxの数値
+    y: 直交座標系のyの数値
+    z: 直交座標系のzの数値
+    r: 直交座標系のRの数値
+    """
+        string = "MovJ({:f},{:f},{:f},{:f}".format(
+            x, y, z, r)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        print(string)
+        return self.sendRecvMsg(string)
+
+    def MovL(self, x, y, z, r, *dynParams):
+        """
+    座標系モーションインターフェース（直線モーションモード）
+    x: 直交座標系のxの数値
+    y: 直交座標系のyの数値
+    z: 直交座標系のzの数値
+    r: 直交座標系のRの数値
+    """
+        string = "MovL({:f},{:f},{:f},{:f}".format(
+            x, y, z, r)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        print(string)
+        return self.sendRecvMsg(string)
+
+    def JointMovJ(self, j1, j2, j3, j4, *dynParams):
+        """
+    ジョイントモーションインターフェース（直線モーションモード）
+    j1〜j6：各ジョイントの点位置の値
+    """
+        string = "JointMovJ({:f},{:f},{:f},{:f}".format(
+            j1, j2, j3, j4)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        print(string)
+        return self.sendRecvMsg(string)
+
+    def Jump(self):
+        print("未定")
+
+    def RelMovJ(self, x, y, z, r, *dynParams):
+        """
+    オフセットモーションインターフェース（点対点モーションモード）
+    j1〜j6：各ジョイントの点位置の値
+    """
+        string = "RelMovJ({:f},{:f},{:f},{:f}".format(
+            x, y, z, r)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def RelMovL(self, offsetX, offsetY, offsetZ, offsetR, *dynParams):
+        """
+    オフセットモーションインターフェース（点対点モーションモード）
+    x: 直交座標系のxのオフセット
+    y: 直交座標系のyのオフセット
+    z: 直交座標系のZのオフセット
+    r: 直交座標系のRのオフセット
+    """
+        string = "RelMovL({:f},{:f},{:f},{:f}".format(offsetX, offsetY, offsetZ, offsetR)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def MovLIO(self, x, y, z, r, *dynParams):
+        """
+    直線移動中にデジタル出力ポートの状態を並行して設定する
+    x: 直交座標系のxの数値
+    y: 直交座標系のyの数値
+    z: 直交座標系のzの数値
+    r: 直交座標系のrの数値
+    *dynParams :パラメータ設定（Mode、Distance、Index、Status）
+                Mode :距離モードを設定します（0：距離パーセンテージ、1：開始点または目標点からの距離）
+                Distance :指定された距離を実行します（Modeが0の場合、値の範囲は0〜100です。Modeが1の場合、値が正の場合、
+                         開始点からの距離を示します。Distanceの値が負の場合、目標点からの距離を表します）
+                Index ：デジタル出力インデックス（値の範囲：1〜24）
+                Status ：デジタル出力状態（値の範囲：0/1）
+    """
+        # 例： MovLIO(0,50,0,0,0,0,(0,50,1,0),(1,1,2,1))
+        string = "MovLIO({:f},{:f},{:f},{:f}".format(
+            x, y, z, r)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def MovJIO(self, x, y, z, r, *dynParams):
+        """
+    点対点モーション中にデジタル出力ポートの状態を並行して設定する
+    x: 直交座標系のxの数値
+    y: 直交座標系のyの数値
+    z: 直交座標系のzの数値
+    r: 直交座標系のrの数値
+    *dynParams :パラメータ設定（Mode、Distance、Index、Status）
+                Mode :距離モードを設定します（0：距離パーセンテージ、1：開始点または目標点からの距離）
+                Distance :指定された距離を実行します（Modeが0の場合、値の範囲は0〜100です。Modeが1の場合、値が正の場合、
+                         開始点からの距離を示します。Distanceの値が負の場合、目標点からの距離を表します）
+                Index ：デジタル出力インデックス（値の範囲：1〜24）
+                Status ：デジタル出力状態（値の範囲：0/1）
+    """
+        # 例： MovJIO(0,50,0,0,0,0,(0,50,1,0),(1,1,2,1))
+        string = "MovJIO({:f},{:f},{:f},{:f}".format(
+            x, y, z, r)
+        self.log("192.168.1.6:29999 に送信:" + string)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        print(string)
+        return self.sendRecvMsg(string)
+
+    def Arc(self, x1, y1, z1, r1, x2, y2, z2, r2, *dynParams):
+        """
+    円弧モーション命令
+    x1, y1, z1, r1 :中間点座標の点値
+    x2, y2, z2, r2 :終点座標の値
+    注：この命令は、他の移動命令と組み合わせて使用する必要があります
+    """
+        string = "Arc({:f},{:f},{:f},{:f},{:f},{:f},{:f},{:f}".format(
+            x1, y1, z1, r1, x2, y2, z2, r2)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        print(string)
+        return self.sendRecvMsg(string)
+
+    def Circle(self, x1, y1, z1, r1, x2, y2, z2, r2, count, *dynParams):
+        """
+    全円モーションコマンド
+    count：実行ラップ数
+    x1, y1, z1, r1 :中間点座標の点値
+    x2, y2, z2, r2 :終点座標の値
+    注：この命令は、他の移動命令と組み合わせて使用する必要があります
+    """
+        string = "Circle({:f},{:f},{:f},{:f},{:f},{:f},{:f},{:f},{:d}".format(
+            x1, y1, z1, r1, x2, y2, z2, r2, count)
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def MoveJog(self, axis_id=None, *dynParams):
+        """
+    ジョイントモーション
+    axis_id: ジョイントモーション軸、オプションの文字列値：
+        J1+ J2+ J3+ J4+ J5+ J6+
+        J1- J2- J3- J4- J5- J6-
+        X+ Y+ Z+ Rx+ Ry+ Rz+
+        X- Y- Z- Rx- Ry- Rz-
+    *dynParams: パラメータ設定（coord_type、user_index、tool_index）
+                coord_type: 1：ユーザー座標 2：ツール座標（デフォルト値は1）
+                user_index: ユーザーインデックスは0〜9です（デフォルト値は0）
+                tool_index: ツールインデックスは0〜9です（デフォルト値は0）
+    """
+        if axis_id is not None:
+            string = "MoveJog({:s}".format(axis_id)
+        else:
+            string = "MoveJog("
+        for params in dynParams:
+            string = string + "," + str(params)
+        string = string + ")"
+        return self.sendRecvMsg(string)
+
+    def Sync(self):
+        """
+    ブロッキングプログラムはキュー命令を実行し、すべてのキュー命令が
