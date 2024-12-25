@@ -227,7 +227,7 @@ class Agent:
     def __init__(self, model, tools, system="", checkpointer=None):
         self.system = system
         self.analysis_results = {}
-        self.directory_structure = self.traverse_directory('./vast-vision-nocode-tool-analysis/nodes_common')
+        self.directory_structure = self.traverse_directory('../dobot_robot/result')
         graph = StateGraph(AgentState)
         graph.add_node("llm", self.call_openai)
         graph.add_node("action", self.take_action)
