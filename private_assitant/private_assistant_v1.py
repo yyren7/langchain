@@ -2,15 +2,19 @@
 import os
 import logging
 from langchain.agents import Tool
+from langchain_openai import ChatOpenAI  # 使用 langchain 的 ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from google.api_core.exceptions import ResourceExhausted
 
 # 配置日志记录
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # 定义 LLM
+'''
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash-exp",
     temperature=0,
@@ -19,8 +23,14 @@ llm = ChatGoogleGenerativeAI(
     max_retries=2,
     api_key=os.environ["GOOGLE_API_KEY"]
 )
-
-
+'''
+# 使用 langchain 的 ChatOpenAI 初始化 deepseek_llm
+deepseek_llm = ChatOpenAI(
+    model='deepseek-chat',
+    openai_api_key=os.environ["DEEPSEEK_API_KEY"],
+    openai_api_base='https://api.deepseek.com',
+    max_tokens=8192
+)
 # 定义 should_continue Tool
 def should_continue_tool(user_input):
     prompt = f"""判断用户是否明确表示要结束当前对话。仅回答yes或no，不包含任何其他文字。yes表示用户不希望结束对话，no表示用户希望结束对话。请结合用户的实际意图来判断，而不仅仅是根据关键词。只有当用户的意图非常明确地表示要结束对话时，才回答‘no’，否则回答‘yes’。例如，当用户说‘我要写一封道别的信’时，不应认为用户要结束对话；而当用户说‘好的，再见’时，应认为用户要结束对话。
@@ -28,7 +38,7 @@ def should_continue_tool(user_input):
     User Input: {user_input}
 
     Response:"""
-    response = llm.invoke(prompt)
+    response = deepseek_llm.invoke(prompt)
     return response.content.strip().lower() == "yes"
 
 
@@ -136,7 +146,7 @@ class DialogueAgent:
 # 主函数
 def main():
     # 初始化对话代理
-    agent = DialogueAgent(llm)
+    agent = DialogueAgent(deepseek_llm)
 
     print("Welcome to the Dialogue Agent! Type 'exit', 'quit', 'bye', 'no', 'stop', or 'end' to end the conversation.")
 
