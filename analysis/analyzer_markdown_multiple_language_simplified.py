@@ -182,7 +182,7 @@ def translate_text(text: str, target_language: str) -> str:
         return "Unsupported target language."
     prompt = f"Translate the following text to {target_language}:\n\n{text}"
     messages = [
-        SystemMessage(content="You are a professional translator."),
+        SystemMessage(content="You are a professional translator and software programmer.You are told to translate technical documents into other languages."),
         HumanMessage(content=prompt)
     ]
     try:
@@ -190,7 +190,6 @@ def translate_text(text: str, target_language: str) -> str:
         analysis_result = ""  # 用于累积完整的分析结果
         for chunk in llm.stream(messages):  # 逐块处理响应
             part = chunk.content  # 假设每个 chunk 包含部分响应内容
-            print(part, end='', flush=True)  # 实时输出到控制台
             analysis_result += part  # 累积完整的分析结果
     except ResourceExhausted as e:
         logging.error(f"ResourceExhausted error: {e}")
@@ -227,7 +226,7 @@ class Agent:
     def __init__(self, model, tools, system="", checkpointer=None):
         self.system = system
         self.analysis_results = {}
-        self.directory_structure = self.traverse_directory('../dobot_robot/result')
+        self.directory_structure = self.traverse_directory('../api_minimazation')
         graph = StateGraph(AgentState)
         graph.add_node("llm", self.call_openai)
         graph.add_node("action", self.take_action)
@@ -376,12 +375,14 @@ def dict_to_markdown(data, level=0):
                 markdown += f"\n{'#' * (level + 1)} {key}\n"
             markdown += dict_to_markdown(value, level + 1)
         else:
-            if 'analysis' in value:
-                markdown += f"\n### {key}\n"
-                markdown += f"**Analysis:**\n\n{value['analysis']}\n"
+            if key=="content":
+                # markdown += f"\n### {key}\n"
+                markdown += f"**Content:**\n\n```python\n{value}\n```\n"
+                # markdown += f"**Analysis:**\n\n{value['analysis']}\n"
             else:
                 markdown += f"\n### {key}\n\n{value}\n"
     return markdown
+
 
 # 设置系统提示
 prompt = """

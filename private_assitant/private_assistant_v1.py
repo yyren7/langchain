@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import logging
 from langchain.agents import Tool
@@ -19,18 +20,17 @@ llm = ChatGoogleGenerativeAI(
     api_key=os.environ["GOOGLE_API_KEY"]
 )
 
+
 # 定义 should_continue Tool
 def should_continue_tool(user_input):
-    # 使用 LLM 判断是否继续对话
-    prompt = f"""Based on the following user input, determine if the user wants to end the conversation. 
-    Respond with 'yes' if the user wants to continue, or 'no' if the user wants to end the conversation.
+    prompt = f"""判断用户是否明确表示要结束当前对话。仅回答yes或no，不包含任何其他文字。yes表示用户不希望结束对话，no表示用户希望结束对话。请结合用户的实际意图来判断，而不仅仅是根据关键词。只有当用户的意图非常明确地表示要结束对话时，才回答‘no’，否则回答‘yes’。例如，当用户说‘我要写一封道别的信’时，不应认为用户要结束对话；而当用户说‘好的，再见’时，应认为用户要结束对话。
 
     User Input: {user_input}
 
     Response:"""
-
     response = llm.invoke(prompt)
     return response.content.strip().lower() == "yes"
+
 
 should_continue_tool = Tool(
     name="ShouldContinue",
@@ -38,12 +38,14 @@ should_continue_tool = Tool(
     description="Determines whether the conversation should continue based on user input."
 )
 
+
 # 定义对话代理类
 class DialogueAgent:
     def __init__(self, model, system_prompt="You are a helpful assistant."):
         self.model = model
         self.system_prompt = system_prompt
         self.messages = [SystemMessage(content=system_prompt)]
+        self.dialogue_history = []  # 用于记录对话历史
 
     @retry(
         retry=retry_if_exception_type(ResourceExhausted),
@@ -51,21 +53,85 @@ class DialogueAgent:
         stop=stop_after_attempt(3),
         reraise=True
     )
+    def interact_stream(self, user_input, update_callback, finalize_callback):
+        """
+        流式交互方法，逐块更新 GUI 内容。
+
+        :param user_input: 用户输入文本
+        :param update_callback: 每次接收到块时调用的回调函数
+        :param finalize_callback: 流结束时调用的回调函数
+        """
+        # 将用户输入添加到对话历史中
+        self.messages.append(HumanMessage(content=user_input))
+        self.dialogue_history.append(f"**You:** {user_input}")  # 记录用户输入
+
+        try:
+            # 调用模型生成回复，使用流式输出
+            response_stream = self.model.stream(self.messages)
+
+            full_response = ""
+            for chunk in response_stream:
+                full_response += chunk.content
+                update_callback(chunk.content)  # 调用更新回调
+
+            # 将完整的响应添加到对话历史中
+            self.messages.append(AIMessage(content=full_response))
+            self.dialogue_history.append(f"**Agent:** {full_response}")  # 记录代理回复
+
+            finalize_callback()  # 调用完成回调
+        except ResourceExhausted as e:
+            logging.error(f"ResourceExhausted error: {e}")
+            error_message = "API quota exhausted. Please try again later."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            update_callback(error_message)
+            finalize_callback()
+        except Exception as e:
+            logging.error(f"Error during interaction: {e}")
+            error_message = "An error occurred during the interaction."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            update_callback(error_message)
+            finalize_callback()
+
     def interact(self, user_input):
         # 将用户输入添加到对话历史中
         self.messages.append(HumanMessage(content=user_input))
+        self.dialogue_history.append(f"**You:** {user_input}")  # 记录用户输入
 
         try:
-            # 调用模型生成回复
-            response = self.model.invoke(self.messages)
-            self.messages.append(response)
-            return response.content
+            # 调用模型生成回复，使用流式输出
+            response_stream = self.model.stream(self.messages)
+
+            # 逐块输出响应
+            print("Agent: ", end="", flush=True)
+            full_response = ""
+            for chunk in response_stream:
+                print(chunk.content, end="", flush=True)
+                full_response += chunk.content
+
+            # 将完整的响应添加到对话历史中
+            self.messages.append(AIMessage(content=full_response))
+            self.dialogue_history.append(f"**Agent:** {full_response}")  # 记录代理回复
+            print()  # 换行
+            return full_response
         except ResourceExhausted as e:
             logging.error(f"ResourceExhausted error: {e}")
-            return "API quota exhausted. Please try again later."
+            error_message = "API quota exhausted. Please try again later."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            return error_message
         except Exception as e:
             logging.error(f"Error during interaction: {e}")
-            return "An error occurred during the interaction."
+            error_message = "An error occurred during the interaction."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            return error_message
+
+    def save_dialogue_to_markdown(self, filename="result.md"):
+        """将对话历史保存为 Markdown 文件"""
+        with open(filename, "w", encoding="utf-8") as file:
+            file.write("# Dialogue History\n\n")
+            for entry in self.dialogue_history:
+                file.write(f"{entry}\n\n")
+        logging.info(f"Dialogue saved to {filename}")
+
 
 # 主函数
 def main():
@@ -85,11 +151,12 @@ def main():
         # 使用 should_continue Tool 判断是否退出对话
         if not should_continue_tool.func(user_input):
             print("Goodbye!")
+            agent.save_dialogue_to_markdown()  # 保存对话记录
             break
 
         # 与代理交互
-        response = agent.interact(user_input)
-        print(f"Agent: {response}")
+        agent.interact(user_input)
+
 
 if __name__ == "__main__":
     main()
