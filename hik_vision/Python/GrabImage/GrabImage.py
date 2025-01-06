@@ -7,7 +7,7 @@ import msvcrt
 from ctypes import *
 
 sys.path.append("../MvImport")
-from MvCameraControl_class import *
+from hik_vision.Python.MvImport.MvCameraControl_class import *
 
 g_bExit = False
 

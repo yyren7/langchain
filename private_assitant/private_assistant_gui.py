@@ -1,168 +1,185 @@
-import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QVBoxLayout, QWidget, QScrollArea
-from PySide6.QtCore import Qt, QTimer, QObject, Signal
-from PySide6.QtGui import QTextCursor, QKeyEvent
-from private_assistant_v1 import DialogueAgent, should_continue_tool, llm  # 导入 llm
+# -*- coding: utf-8 -*-
+import os
+import logging
+import time
 
-class StreamRedirector(QObject):
-    """重定向控制台输出到 QTextEdit"""
-    text_written = Signal(str)
+from langchain.agents import Tool
+from langchain_openai import ChatOpenAI  # 使用 langchain 的 ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-    def write(self, text):
-        self.text_written.emit(str(text))
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from google.api_core.exceptions import ResourceExhausted
 
-    def flush(self):
-        pass
+# 配置日志记录
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
+# 定义 LLM
+'''
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.0-flash-exp",
+    temperature=0,
+    max_tokens=None,
+    timeout=None,
+    max_retries=2,
+    api_key=os.environ["GOOGLE_API_KEY"]
+)
+'''
+# 使用 langchain 的 ChatOpenAI 初始化 deepseek_llm
+deepseek_llm = ChatOpenAI(
+    model='deepseek-chat',
+    openai_api_key=os.environ["DEEPSEEK_API_KEY"],
+    openai_api_base='https://api.deepseek.com',
+    max_tokens=8192
+)
+# 定义 should_continue Tool
+def should_continue_tool(user_input):
+    prompt = f"""判断用户是否明确表示要结束当前对话。仅回答yes或no，不包含任何其他文字。yes表示用户不希望结束对话，no表示用户希望结束对话。请结合用户的实际意图来判断，而不仅仅是根据关键词。只有当用户的意图非常明确地表示要结束对话时，才回答‘no’，否则回答‘yes’。例如，当用户说‘我要写一封道别的信’时，不应认为用户要结束对话；而当用户说‘好的，再见’时，应认为用户要结束对话。
 
-class ChatBubbleWidget(QTextEdit):
-    """自定义气泡控件"""
-    def __init__(self, text, is_user, parent=None):
-        super().__init__(parent)
-        self.setReadOnly(True)
-        self.setFrameShape(QTextEdit.NoFrame)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setStyleSheet(self.get_bubble_style(is_user))
-        self.setText(text)
-        self.adjustSize()
+    User Input: {user_input}
 
-    def get_bubble_style(self, is_user):
-        """根据用户或代理设置气泡样式"""
-        if is_user:
-            return """
-                QTextEdit {
-                    background-color: #dcf8c6;
-                    border-radius: 10px;
-                    padding: 8px;
-                    margin: 5px;
-                    color: black;  /* 字体颜色为黑色 */
-                    align-self: flex-end;
-                }
-            """
-        else:
-            return """
-                QTextEdit {
-                    background-color: #ffffff;
-                    border-radius: 10px;
-                    padding: 8px;
-                    margin: 5px;
-                    color: black;  /* 字体颜色为黑色 */
-                    align-self: flex-start;
-                }
-            """
+    Response:"""
+    response = deepseek_llm.invoke(prompt)
+    return response.content.strip().lower() == "yes"
 
 
-class InputTextEdit(QTextEdit):
-    """自定义输入框，支持回车键发送消息"""
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.parent = parent
-
-    def keyPressEvent(self, event: QKeyEvent):
-        """重写 keyPressEvent 方法，监听回车键"""
-        if event.key() == Qt.Key_Return and not event.modifiers():
-            # 按下回车键（无修饰键，如 Shift）
-            self.parent.process_input()
-        else:
-            # 其他按键正常处理
-            super().keyPressEvent(event)
+should_continue_tool = Tool(
+    name="ShouldContinue",
+    func=should_continue_tool,
+    description="Determines whether the conversation should continue based on user input."
+)
 
 
-class PrivateAssistantGUI(QMainWindow):
-    def __init__(self):
-        super().__init__()
+# 定义对话代理类
+class DialogueAgent:
+    def __init__(self, model, system_prompt="You are a helpful assistant."):
+        self.model = model
+        self.system_prompt = system_prompt
+        self.messages = [SystemMessage(content=system_prompt)]
+        self.dialogue_history = []  # 用于记录对话历史
 
-        self.setWindowTitle("Private Assistant")
-        self.setGeometry(100, 100, 600, 400)
+    @retry(
+        retry=retry_if_exception_type(ResourceExhausted),
+        wait=wait_exponential(min=1, max=10),
+        stop=stop_after_attempt(3),
+        reraise=True
+    )
+    def interact_stream(self, user_input, update_callback, finalize_callback):
+        """
+        流式交互方法，逐块更新 GUI 内容。
 
-        # 初始化对话代理
-        self.agent = DialogueAgent(llm)
+        :param user_input: 用户输入文本
+        :param update_callback: 每次接收到块时调用的回调函数
+        :param finalize_callback: 流结束时调用的回调函数
+        """
+        # 将用户输入添加到对话历史中
+        self.messages.append(HumanMessage(content=user_input))
+        self.dialogue_history.append(f"**You:** {user_input}")  # 记录用户输入
 
-        # 创建主窗口的布局
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
-        self.layout = QVBoxLayout(self.central_widget)
+        try:
+            # 调用模型生成回复，使用流式输出
+            response_stream = self.model.stream(self.messages)
 
-        # 创建滚动区域
-        self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)
-        self.scroll_content = QWidget()
-        self.scroll_layout = QVBoxLayout(self.scroll_content)
-        self.scroll_area.setWidget(self.scroll_content)
-        self.layout.addWidget(self.scroll_area)
+            full_response = ""
+            for chunk in response_stream:
+                full_response += chunk.content
+                update_callback(chunk.content)  # 调用更新回调
 
-        # 创建输入区域
-        self.input_text = InputTextEdit(self)  # 使用自定义输入框
-        self.input_text.setPlaceholderText("Type your message here...")
-        self.input_text.setMaximumHeight(100)
-        self.layout.addWidget(self.input_text)
+            # 将完整的响应添加到对话历史中
+            self.messages.append(AIMessage(content=full_response))
+            self.dialogue_history.append(f"**Agent:** {full_response}")  # 记录代理回复
 
-        # 重定向控制台输出
-        self.console_output = QTextEdit()  # 创建一个 QTextEdit 用于控制台输出
-        self.console_output.setReadOnly(True)
-        self.scroll_layout.addWidget(self.console_output)
+            finalize_callback()  # 调用完成回调
+        except ResourceExhausted as e:
+            logging.error(f"ResourceExhausted error: {e}")
+            error_message = "API quota exhausted. Please try again later."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            update_callback(error_message)
+            finalize_callback()
+        except Exception as e:
+            logging.error(f"Error during interaction: {e}")
+            error_message = "An error occurred during the interaction."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            update_callback(error_message)
+            finalize_callback()
 
-        # 创建 StreamRedirector 并连接信号
-        self.redirector = StreamRedirector()
-        self.redirector.text_written.connect(self.console_output.append)
-        sys.stdout = self.redirector
+    def interact(self, user_input):
+        # 将用户输入添加到对话历史中
+        self.messages.append(HumanMessage(content=user_input))
+        self.dialogue_history.append(f"**You:** {user_input}")  # 记录用户输入
 
-        # 显示欢迎信息
-        self.add_bubble("Welcome to the Private Assistant! Type 'exit', 'quit', 'bye', 'no', 'stop', or 'end' to end the conversation.\n", False)
+        try:
+            # 调用模型生成回复，使用流式输出
+            response_stream = self.model.stream(self.messages)
 
-    def add_bubble(self, text, is_user):
-        """添加气泡到对话区域"""
-        bubble = ChatBubbleWidget(text, is_user)
-        self.scroll_layout.addWidget(bubble, alignment=Qt.AlignRight if is_user else Qt.AlignLeft)
-        QTimer.singleShot(0, self.scroll_to_bottom)
+            # 逐块输出响应
+            print("Agent: ", end="", flush=True)
+            full_response = ""
+            for chunk in response_stream:
+                print(chunk.content, end="", flush=True)
+                full_response += chunk.content
 
-    def scroll_to_bottom(self):
-        """滚动到对话区域底部"""
-        self.scroll_area.verticalScrollBar().setValue(self.scroll_area.verticalScrollBar().maximum())
+            # 将完整的响应添加到对话历史中
+            self.messages.append(AIMessage(content=full_response))
+            self.dialogue_history.append(f"**Agent:** {full_response}")  # 记录代理回复
+            print()  # 换行
+            return full_response
+        except ResourceExhausted as e:
+            logging.error(f"ResourceExhausted error: {e}")
+            error_message = "API quota exhausted. Please try again later."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            return error_message
+        except Exception as e:
+            logging.error(f"Error during interaction: {e}")
+            error_message = "An error occurred during the interaction."
+            self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
+            return error_message
 
-    def process_input(self):
+    def save_dialogue_to_markdown(self, folder="result"):
+        """将对话历史保存为 Markdown 文件，文件名使用当前时间戳，并保存到指定文件夹"""
+
+        # 确保文件夹存在，如果不存在则创建
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        # 生成当前时间戳作为文件名
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        filename = os.path.join(folder, f"{timestamp}.md")
+
+        # 将对话历史保存为 Markdown 文件
+        with open(filename, "w", encoding="utf-8") as file:
+            file.write("# Dialogue History\n\n")
+            for entry in self.dialogue_history:
+                file.write(f"{entry}\n\n")
+
+        logging.info(f"Dialogue saved to {filename}")
+
+
+# 主函数
+def main():
+    # 初始化对话代理
+    agent = DialogueAgent(deepseek_llm)
+
+    print("Welcome to the Dialogue Agent! Type 'exit', 'quit', 'bye', 'no', 'stop', or 'end' to end the conversation.")
+
+    while True:
         # 获取用户输入
-        user_input = self.input_text.toPlainText().strip()
+        user_input = input("\nYou: ").strip()  # 去除输入的前后空白字符
 
-        # 如果输入为空，则跳过处理
+        # 如果输入为空（用户只按了回车），则跳过处理
         if not user_input:
-            return
-
-        # 清空输入框
-        self.input_text.clear()
-
-        # 显示用户输入气泡
-        self.add_bubble(user_input, True)
+            continue
 
         # 使用 should_continue Tool 判断是否退出对话
         if not should_continue_tool.func(user_input):
-            self.add_bubble("Goodbye!", False)
-            self.agent.save_dialogue_to_markdown()  # 保存对话记录
-            QTimer.singleShot(2000, self.close)  # 2秒后关闭窗口
-            return
+            print("Goodbye!")
+            agent.save_dialogue_to_markdown()  # 保存对话记录
+            break
 
-        # 创建代理回复气泡（空内容，稍后填充）
-        agent_bubble = ChatBubbleWidget("", False)
-        self.scroll_layout.addWidget(agent_bubble, alignment=Qt.AlignLeft)
-        QTimer.singleShot(0, self.scroll_to_bottom)
-
-        # 与代理交互（流式输出）
-        def update_bubble(chunk):
-            """更新代理气泡内容"""
-            agent_bubble.setText(agent_bubble.toPlainText() + chunk)
-            QTimer.singleShot(0, self.scroll_to_bottom)
-
-        def finalize_bubble():
-            """完成气泡显示"""
-            agent_bubble.setText(agent_bubble.toPlainText().strip())
-
-        # 调用 interact_stream 方法
-        self.agent.interact_stream(user_input, update_bubble, finalize_bubble)
+        # 与代理交互
+        agent.interact(user_input)
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = PrivateAssistantGUI()
-    window.show()
-    sys.exit(app.exec())
+    main()

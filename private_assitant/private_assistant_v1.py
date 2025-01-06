@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
+import time
+
 from langchain.agents import Tool
 from langchain_openai import ChatOpenAI  # 使用 langchain 的 ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
@@ -134,12 +136,23 @@ class DialogueAgent:
             self.dialogue_history.append(f"**Agent:** {error_message}")  # 记录错误信息
             return error_message
 
-    def save_dialogue_to_markdown(self, filename="result.md"):
-        """将对话历史保存为 Markdown 文件"""
+    def save_dialogue_to_markdown(self, folder="result"):
+        """将对话历史保存为 Markdown 文件，文件名使用当前时间戳，并保存到指定文件夹"""
+
+        # 确保文件夹存在，如果不存在则创建
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        # 生成当前时间戳作为文件名
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        filename = os.path.join(folder, f"{timestamp}.md")
+
+        # 将对话历史保存为 Markdown 文件
         with open(filename, "w", encoding="utf-8") as file:
             file.write("# Dialogue History\n\n")
             for entry in self.dialogue_history:
                 file.write(f"{entry}\n\n")
+
         logging.info(f"Dialogue saved to {filename}")
 
 
