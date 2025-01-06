@@ -106,7 +106,7 @@ class InputTextEdit(QTextEdit):
 class PrivateAssistantGUI(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Private Assistant (GUI Chunk Streaming)")
+        self.setWindowTitle("Private Assistant (GUI Streaming)")
         self.setGeometry(100, 100, 600, 400)
         self.setContentsMargins(0, 0, 0, 0)
 
