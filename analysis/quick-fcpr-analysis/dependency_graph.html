@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 600px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "app\\lib\\page\\programing.py", "label": "app\\lib\\page\\programing.py", "shape": "dot"}, {"color": "#97c2fc", "id": "DM", "label": "DM", "shape": "dot"}, {"color": "#97c2fc", "id": "EM", "label": "EM", "shape": "dot"}, {"color": "#97c2fc", "id": "R", "label": "R", "shape": "dot"}, {"color": "#97c2fc", "id": "MR", "label": "MR", "shape": "dot"}, {"color": "#97c2fc", "id": "LR", "label": "LR", "shape": "dot"}, {"color": "#97c2fc", "id": "CR", "label": "CR", "shape": "dot"}, {"color": "#97c2fc", "id": "T", "label": "T", "shape": "dot"}, {"color": "#97c2fc", "id": "L", "label": "L", "shape": "dot"}, {"color": "#97c2fc", "id": "RD", "label": "RD", "shape": "dot"}, {"color": "#97c2fc", "id": "RAC", "label": "RAC", "shape": "dot"}, {"color": "#97c2fc", "id": "TEACH_FILE_PATH", "label": "TEACH_FILE_PATH", "shape": "dot"}, {"color": "#97c2fc", "id": "NUMBER_PARAM_FILE_PATH", "label": "NUMBER_PARAM_FILE_PATH", "shape": "dot"}, {"color": "#97c2fc", "id": "FLAG_PARAM_FILE_PATH", "label": "FLAG_PARAM_FILE_PATH", "shape": "dot"}, {"color": "#97c2fc", "id": "ERROR_FILE_PATH", "label": "ERROR_FILE_PATH", "shape": "dot"}, {"color": "#97c2fc", "id": "error_yaml", "label": "error_yaml", "shape": "dot"}, {"color": "#97c2fc", "id": "number_param_yaml", "label": "number_param_yaml", "shape": "dot"}, {"color": "#97c2fc", "id": "initial_number_param_yaml", "label": "initial_number_param_yaml", "shape": "dot"}, {"color": "#97c2fc", "id": "lib.utility.helper", "label": "lib.utility.helper", "shape": "dot"}, {"color": "#97c2fc", "id": "copy", "label": "copy", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\get_setting.py", "label": "app\\lib\\plc\\get_setting.py", "shape": "dot"}, {"color": "#97c2fc", "id": "openpyxl", "label": "openpyxl", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\load_excel.py", "label": "app\\lib\\plc\\load_excel.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\plc_base_class.py", "label": "app\\lib\\plc\\plc_base_class.py", "shape": "dot"}, {"color": "#97c2fc", "id": "perf_counter", "label": "perf_counter", "shape": "dot"}, {"color": "#97c2fc", "id": "Tuple", "label": "Tuple", "shape": "dot"}, {"color": "#97c2fc", "id": "Union", "label": "Union", "shape": "dot"}, {"color": "#97c2fc", "id": "BaseModel", "label": "BaseModel", "shape": "dot"}, {"color": "#97c2fc", "id": "plc_comm", "label": "plc_comm", "shape": "dot"}, {"color": "#97c2fc", "id": "setup_logger", "label": "setup_logger", "shape": "dot"}, {"color": "#97c2fc", "id": "getLogger", "label": "getLogger", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\plc_lib.py", "label": "app\\lib\\plc\\plc_lib.py", "shape": "dot"}, {"color": "#97c2fc", "id": "BasePLC", "label": "BasePLC", "shape": "dot"}, {"color": "#97c2fc", "id": "convert_signed", "label": "convert_signed", "shape": "dot"}, {"color": "#97c2fc", "id": "load_excel", "label": "load_excel", "shape": "dot"}, {"color": "#97c2fc", "id": "List", "label": "List", "shape": "dot"}, {"color": "#97c2fc", "id": "sleep", "label": "sleep", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\plc_thread.py", "label": "app\\lib\\plc\\plc_thread.py", "shape": "dot"}, {"color": "#97c2fc", "id": "socket", "label": "socket", "shape": "dot"}, {"color": "#97c2fc", "id": "QtCore", "label": "QtCore", "shape": "dot"}, {"color": "#97c2fc", "id": "Any", "label": "Any", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\stop_watch.py", "label": "app\\lib\\plc\\stop_watch.py", "shape": "dot"}, {"color": "#97c2fc", "id": "wraps", "label": "wraps", "shape": "dot"}, {"color": "#97c2fc", "id": "time", "label": "time", "shape": "dot"}, {"color": "#97c2fc", "id": "lib.write_csv", "label": "lib.write_csv", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\write_csv.py", "label": "app\\lib\\plc\\write_csv.py", "shape": "dot"}, {"color": "#97c2fc", "id": "csv", "label": "csv", "shape": "dot"}, {"color": "#97c2fc", "id": "os", "label": "os", "shape": "dot"}, {"color": "#97c2fc", "id": "datetime", "label": "datetime", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\__init__.py", "label": "app\\lib\\plc\\__init__.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\convert_format.py", "label": "app\\lib\\plc\\api\\convert_format.py", "shape": "dot"}, {"color": "#97c2fc", "id": "sys", "label": "sys", "shape": "dot"}, {"color": "#97c2fc", "id": "re", "label": "re", "shape": "dot"}, {"color": "#97c2fc", "id": "itertools", "label": "itertools", "shape": "dot"}, {"color": "#97c2fc", "id": "more_itertools", "label": "more_itertools", "shape": "dot"}, {"color": "#97c2fc", "id": "logger", "label": "logger", "shape": "dot"}, {"color": "#97c2fc", "id": "global_vars", "label": "global_vars", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\device_list.py", "label": "app\\lib\\plc\\api\\device_list.py", "shape": "dot"}, {"color": "#97c2fc", "id": "traceback", "label": "traceback", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\global_vars.py", "label": "app\\lib\\plc\\api\\global_vars.py", "shape": "dot"}, {"color": "#97c2fc", "id": "json", "label": "json", "shape": "dot"}, {"color": "#97c2fc", "id": "dotenv", "label": "dotenv", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\logger.py", "label": "app\\lib\\plc\\api\\logger.py", "shape": "dot"}, {"color": "#97c2fc", "id": "logging", "label": "logging", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\plc_comm.py", "label": "app\\lib\\plc\\api\\plc_comm.py", "shape": "dot"}, {"color": "#97c2fc", "id": "typing", "label": "typing", "shape": "dot"}, {"color": "#97c2fc", "id": "asyncio", "label": "asyncio", "shape": "dot"}, {"color": "#97c2fc", "id": "math", "label": "math", "shape": "dot"}, {"color": "#97c2fc", "id": "struct", "label": "struct", "shape": "dot"}, {"color": "#97c2fc", "id": "psutil", "label": "psutil", "shape": "dot"}, {"color": "#97c2fc", "id": "netifaces", "label": "netifaces", "shape": "dot"}, {"color": "#97c2fc", "id": "ModbusClient", "label": "ModbusClient", "shape": "dot"}, {"color": "#97c2fc", "id": "device_list", "label": "device_list", "shape": "dot"}, {"color": "#97c2fc", "id": "convert_format", "label": "convert_format", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\pymodbus.py", "label": "app\\lib\\plc\\api\\pymodbus.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\plc\\api\\__init__.py", "label": "app\\lib\\plc\\api\\__init__.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\robot\\dobot_mg400_api.py", "label": "app\\lib\\robot\\dobot_mg400_api.py", "shape": "dot"}, {"color": "#97c2fc", "id": "*", "label": "*", "shape": "dot"}, {"color": "#97c2fc", "id": "select", "label": "select", "shape": "dot"}, {"color": "#97c2fc", "id": "Process", "label": "Process", "shape": "dot"}, {"color": "#97c2fc", "id": "Value", "label": "Value", "shape": "dot"}, {"color": "#97c2fc", "id": "Array", "label": "Array", "shape": "dot"}, {"color": "#97c2fc", "id": "numpy", "label": "numpy", "shape": "dot"}, {"color": "#97c2fc", "id": "Optional", "label": "Optional", "shape": "dot"}, {"color": "#97c2fc", "id": "Timer", "label": "Timer", "shape": "dot"}, {"color": "#97c2fc", "id": "Text", "label": "Text", "shape": "dot"}, {"color": "#97c2fc", "id": "END", "label": "END", "shape": "dot"}, {"color": "#97c2fc", "id": "configparser", "label": "configparser", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "label": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "shape": "dot"}, {"color": "#97c2fc", "id": "serial", "label": "serial", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "label": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\robot\\yamaha_scara_api.py", "label": "app\\lib\\robot\\yamaha_scara_api.py", "shape": "dot"}, {"color": "#97c2fc", "id": "RPi.GPIO", "label": "RPi.GPIO", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\sidebar\\number_parameter.py", "label": "app\\lib\\sidebar\\number_parameter.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\sidebar\\parameter.py", "label": "app\\lib\\sidebar\\parameter.py", "shape": "dot"}, {"color": "#97c2fc", "id": "yaml", "label": "yaml", "shape": "dot"}, {"color": "#97c2fc", "id": "lib.utility.functions", "label": "lib.utility.functions", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\sidebar\\robot_io.py", "label": "app\\lib\\sidebar\\robot_io.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\sidebar\\teaching.py", "label": "app\\lib\\sidebar\\teaching.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\auto_globals.py", "label": "app\\lib\\utility\\auto_globals.py", "shape": "dot"}, {"color": "#97c2fc", "id": "redis", "label": "redis", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\common_globals.py", "label": "app\\lib\\utility\\common_globals.py", "shape": "dot"}, {"color": "#97c2fc", "id": "LaddarSeqAPI", "label": "LaddarSeqAPI", "shape": "dot"}, {"color": "#97c2fc", "id": "RobotApiClient", "label": "RobotApiClient", "shape": "dot"}, {"color": "#97c2fc", "id": "local_R_setttings", "label": "local_R_setttings", "shape": "dot"}, {"color": "#97c2fc", "id": "local_MR_setttings", "label": "local_MR_setttings", "shape": "dot"}, {"color": "#97c2fc", "id": "local_T_setttings", "label": "local_T_setttings", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\constant.py", "label": "app\\lib\\utility\\constant.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\functions.py", "label": "app\\lib\\utility\\functions.py", "shape": "dot"}, {"color": "#97c2fc", "id": "accumulate", "label": "accumulate", "shape": "dot"}, {"color": "#97c2fc", "id": "lib.sidebar.teaching", "label": "lib.sidebar.teaching", "shape": "dot"}, {"color": "#97c2fc", "id": "lib.sidebar.number_parameter", "label": "lib.sidebar.number_parameter", "shape": "dot"}, {"color": "#97c2fc", "id": "lib.sidebar.robot_io", "label": "lib.sidebar.robot_io", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\helper.py", "label": "app\\lib\\utility\\helper.py", "shape": "dot"}, {"color": "#97c2fc", "id": "OrderedDict", "label": "OrderedDict", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\laddar_api.py", "label": "app\\lib\\utility\\laddar_api.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\local_relay_settings.py", "label": "app\\lib\\utility\\local_relay_settings.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\man_globals.py", "label": "app\\lib\\utility\\man_globals.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\robot_api_client.py", "label": "app\\lib\\utility\\robot_api_client.py", "shape": "dot"}, {"color": "#97c2fc", "id": "app\\lib\\utility\\tcp_client.py", "label": "app\\lib\\utility\\tcp_client.py", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "L"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "RD"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "RAC"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "error_yaml"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "number_param_yaml"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "initial_number_param_yaml"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\page\\programing.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\plc\\get_setting.py", "to": "openpyxl"}, {"arrows": "to", "from": "app\\lib\\plc\\load_excel.py", "to": "openpyxl"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "perf_counter"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "Tuple"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "Union"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "BaseModel"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "plc_comm"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "setup_logger"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_base_class.py", "to": "getLogger"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "BasePLC"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "convert_signed"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "load_excel"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "List"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "Tuple"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "perf_counter"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_lib.py", "to": "sleep"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_thread.py", "to": "socket"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_thread.py", "to": "QtCore"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_thread.py", "to": "Any"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_thread.py", "to": "setup_logger"}, {"arrows": "to", "from": "app\\lib\\plc\\plc_thread.py", "to": "getLogger"}, {"arrows": "to", "from": "app\\lib\\plc\\stop_watch.py", "to": "wraps"}, {"arrows": "to", "from": "app\\lib\\plc\\stop_watch.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\plc\\stop_watch.py", "to": "lib.write_csv"}, {"arrows": "to", "from": "app\\lib\\plc\\write_csv.py", "to": "csv"}, {"arrows": "to", "from": "app\\lib\\plc\\write_csv.py", "to": "os"}, {"arrows": "to", "from": "app\\lib\\plc\\write_csv.py", "to": "datetime"}, {"arrows": "to", "from": "app\\lib\\plc\\write_csv.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\convert_format.py", "to": "sys"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\convert_format.py", "to": "re"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\convert_format.py", "to": "itertools"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\convert_format.py", "to": "more_itertools"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\convert_format.py", "to": "logger"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\convert_format.py", "to": "global_vars"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\device_list.py", "to": "traceback"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\device_list.py", "to": "sys"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\device_list.py", "to": "global_vars"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\device_list.py", "to": "logger"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\global_vars.py", "to": "os"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\global_vars.py", "to": "json"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\global_vars.py", "to": "dotenv"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\logger.py", "to": "os"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\logger.py", "to": "logging"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\logger.py", "to": "dotenv"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "os"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "sys"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "typing"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "asyncio"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "traceback"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "re"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "math"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "struct"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "datetime"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "socket"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "psutil"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "netifaces"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "ModbusClient"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "logger"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "global_vars"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "device_list"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\plc_comm.py", "to": "convert_format"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\pymodbus.py", "to": "ModbusClient"}, {"arrows": "to", "from": "app\\lib\\plc\\api\\pymodbus.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "*"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "select"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "sleep"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "perf_counter"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Process"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Value"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Array"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "numpy"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Tuple"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "List"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Union"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Optional"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "struct"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "socket"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Timer"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "Text"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "END"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "datetime"}, {"arrows": "to", "from": "app\\lib\\robot\\dobot_mg400_api.py", "to": "configparser"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "Tuple"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "List"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "Union"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "Optional"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "numpy"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "serial"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_3axis_tabletop_api.py", "to": "select"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "Tuple"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "List"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "Union"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "Optional"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "numpy"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "serial"}, {"arrows": "to", "from": "app\\lib\\robot\\iai_4axis_tabletop_api.py", "to": "select"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "RPi.GPIO"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "*"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "select"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "Tuple"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "List"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "Union"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "Optional"}, {"arrows": "to", "from": "app\\lib\\robot\\yamaha_scara_api.py", "to": "configparser"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "L"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "RD"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "RAC"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\number_parameter.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "yaml"}, {"arrows": "to", "from": "app\\lib\\sidebar\\parameter.py", "to": "lib.utility.functions"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "L"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "RD"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "RAC"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "lib.utility.functions"}, {"arrows": "to", "from": "app\\lib\\sidebar\\robot_io.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "L"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "RD"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "RAC"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\sidebar\\teaching.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "redis"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "BasePLC"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\auto_globals.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "redis"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "LaddarSeqAPI"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "RobotApiClient"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "BasePLC"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "local_R_setttings"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "local_MR_setttings"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "local_T_setttings"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\common_globals.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "L"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "RD"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "RAC"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "json"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "accumulate"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "lib.sidebar.teaching"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "lib.sidebar.number_parameter"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "lib.sidebar.robot_io"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "re"}, {"arrows": "to", "from": "app\\lib\\utility\\functions.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\utility\\helper.py", "to": "yaml"}, {"arrows": "to", "from": "app\\lib\\utility\\helper.py", "to": "OrderedDict"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "DM"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "EM"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "R"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "MR"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "LR"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "CR"}, {"arrows": "to", "from": "app\\lib\\utility\\laddar_api.py", "to": "T"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "redis"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "copy"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "BasePLC"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "lib.utility.helper"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "TEACH_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "NUMBER_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "FLAG_PARAM_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\man_globals.py", "to": "ERROR_FILE_PATH"}, {"arrows": "to", "from": "app\\lib\\utility\\robot_api_client.py", "to": "time"}, {"arrows": "to", "from": "app\\lib\\utility\\robot_api_client.py", "to": "redis"}, {"arrows": "to", "from": "app\\lib\\utility\\robot_api_client.py", "to": "json"}, {"arrows": "to", "from": "app\\lib\\utility\\tcp_client.py", "to": "socket"}, {"arrows": "to", "from": "app\\lib\\utility\\tcp_client.py", "to": "select"}, {"arrows": "to", "from": "app\\lib\\utility\\tcp_client.py", "to": "time"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

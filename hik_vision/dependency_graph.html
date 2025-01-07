@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "Python\\BasicDemo\\BasicDemo.py", "label": "Python\\BasicDemo\\BasicDemo.py", "shape": "dot"}, {"color": "#97c2fc", "id": "sys", "label": "sys", "shape": "dot"}, {"color": "#97c2fc", "id": "PyQt5.QtWidgets", "label": "PyQt5.QtWidgets", "shape": "dot"}, {"color": "#97c2fc", "id": "CamOperation_class", "label": "CamOperation_class", "shape": "dot"}, {"color": "#97c2fc", "id": "MvCameraControl_class", "label": "MvCameraControl_class", "shape": "dot"}, {"color": "#97c2fc", "id": "MvErrorDefine_const", "label": "MvErrorDefine_const", "shape": "dot"}, {"color": "#97c2fc", "id": "CameraParams_header", "label": "CameraParams_header", "shape": "dot"}, {"color": "#97c2fc", "id": "PyUICBasicDemo", "label": "PyUICBasicDemo", "shape": "dot"}, {"color": "#97c2fc", "id": "ctypes", "label": "ctypes", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\BasicDemo\\CamOperation_class.py", "label": "Python\\BasicDemo\\CamOperation_class.py", "shape": "dot"}, {"color": "#97c2fc", "id": "threading", "label": "threading", "shape": "dot"}, {"color": "#97c2fc", "id": "time", "label": "time", "shape": "dot"}, {"color": "#97c2fc", "id": "inspect", "label": "inspect", "shape": "dot"}, {"color": "#97c2fc", "id": "random", "label": "random", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\BasicDemo\\PyUICBasicDemo.py", "label": "Python\\BasicDemo\\PyUICBasicDemo.py", "shape": "dot"}, {"color": "#97c2fc", "id": "PyQt5", "label": "PyQt5", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "label": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "shape": "dot"}, {"color": "#97c2fc", "id": "os", "label": "os", "shape": "dot"}, {"color": "#97c2fc", "id": "PyUICBasicDemoByGenTL", "label": "PyUICBasicDemoByGenTL", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "label": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\BasicDemoByGenTL\\PyUICBasicDemoByGenTL.py", "label": "Python\\BasicDemoByGenTL\\PyUICBasicDemoByGenTL.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\BasicDemoLineScan\\BasicDemoLineScanCamera.py", "label": "Python\\BasicDemoLineScan\\BasicDemoLineScanCamera.py", "shape": "dot"}, {"color": "#97c2fc", "id": "msvcrt", "label": "msvcrt", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "label": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\ConvertPixelType\\ConvertPixelType.py", "label": "Python\\ConvertPixelType\\ConvertPixelType.py", "shape": "dot"}, {"color": "#97c2fc", "id": "copy", "label": "copy", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\Events\\Events.py", "label": "Python\\Events\\Events.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\Events_Interface\\Events_Interface.py", "label": "Python\\Events_Interface\\Events_Interface.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\GrabImage\\GrabImage.py", "label": "Python\\GrabImage\\GrabImage.py", "shape": "dot"}, {"color": "#97c2fc", "id": "hik_vision.Python.MvImport.MvCameraControl_class", "label": "hik_vision.Python.MvImport.MvCameraControl_class", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\Grab_Callback\\Grab_Callback.py", "label": "Python\\Grab_Callback\\Grab_Callback.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\Grab_LineStart\\Grab_LineStart.py", "label": "Python\\Grab_LineStart\\Grab_LineStart.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\HighBandwidthDecode\\HighBandwidthDecode.py", "label": "Python\\HighBandwidthDecode\\HighBandwidthDecode.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\ImageSave\\ImageSave.py", "label": "Python\\ImageSave\\ImageSave.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\InterfaceAndDevice\\InterfaceAndDevice.py", "label": "Python\\InterfaceAndDevice\\InterfaceAndDevice.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\InterfaceDemo\\InterfaceDemo.py", "label": "Python\\InterfaceDemo\\InterfaceDemo.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MultiCast\\MultiCast.py", "label": "Python\\MultiCast\\MultiCast.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MultiLightCtrl_ImageStitching\\MultiLightCtrl_ImageStitching.py", "label": "Python\\MultiLightCtrl_ImageStitching\\MultiLightCtrl_ImageStitching.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MultipleCameras\\CamOperation_class.py", "label": "Python\\MultipleCameras\\CamOperation_class.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MultipleCameras\\MultipleCameras.py", "label": "Python\\MultipleCameras\\MultipleCameras.py", "shape": "dot"}, {"color": "#97c2fc", "id": "PyQt5.QtGui", "label": "PyQt5.QtGui", "shape": "dot"}, {"color": "#97c2fc", "id": "PyUIMultipleCameras", "label": "PyUIMultipleCameras", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MultipleCameras\\PyUIMultipleCameras.py", "label": "Python\\MultipleCameras\\PyUIMultipleCameras.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MvImport\\CameraParams_const.py", "label": "Python\\MvImport\\CameraParams_const.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MvImport\\CameraParams_header.py", "label": "Python\\MvImport\\CameraParams_header.py", "shape": "dot"}, {"color": "#97c2fc", "id": "CameraParams_const", "label": "CameraParams_const", "shape": "dot"}, {"color": "#97c2fc", "id": "PixelType_header", "label": "PixelType_header", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MvImport\\MvCameraControl_class.py", "label": "Python\\MvImport\\MvCameraControl_class.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MvImport\\MvErrorDefine_const.py", "label": "Python\\MvImport\\MvErrorDefine_const.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\MvImport\\PixelType_header.py", "label": "Python\\MvImport\\PixelType_header.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "label": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\ParametrizeCamera_LineScanIOSettings\\ParametrizeCamera_LineScanIOSettings.py", "label": "Python\\ParametrizeCamera_LineScanIOSettings\\ParametrizeCamera_LineScanIOSettings.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\ParametrizeCamera_LoadAndSave\\ParametrizeCamera_LoadAndSave.py", "label": "Python\\ParametrizeCamera_LoadAndSave\\ParametrizeCamera_LoadAndSave.py", "shape": "dot"}, {"color": "#97c2fc", "id": "Python\\Recording\\Recording.py", "label": "Python\\Recording\\Recording.py", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "sys"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "PyQt5.QtWidgets"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "CamOperation_class"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "MvErrorDefine_const"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "CameraParams_header"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "PyUICBasicDemo"}, {"arrows": "to", "from": "Python\\BasicDemo\\BasicDemo.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "threading"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "time"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "sys"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "inspect"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "random"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "CameraParams_header"}, {"arrows": "to", "from": "Python\\BasicDemo\\CamOperation_class.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\BasicDemo\\PyUICBasicDemo.py", "to": "PyQt5"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "os"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "PyQt5.QtWidgets"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "CamOperation_class"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "MvErrorDefine_const"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "CameraParams_header"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\BasicDemoByGenTL.py", "to": "PyUICBasicDemoByGenTL"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "threading"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "time"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "sys"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "inspect"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "random"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "CameraParams_header"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\CamOperation_class.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\BasicDemoByGenTL\\PyUICBasicDemoByGenTL.py", "to": "PyQt5"}, {"arrows": "to", "from": "Python\\BasicDemoLineScan\\BasicDemoLineScanCamera.py", "to": "sys"}, {"arrows": "to", "from": "Python\\BasicDemoLineScan\\BasicDemoLineScanCamera.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\BasicDemoLineScan\\BasicDemoLineScanCamera.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\BasicDemoLineScan\\BasicDemoLineScanCamera.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "to": "time"}, {"arrows": "to", "from": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "to": "sys"}, {"arrows": "to", "from": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "to": "threading"}, {"arrows": "to", "from": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\ConnectSpecCamera\\ConnectSpecCamera.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\ConvertPixelType\\ConvertPixelType.py", "to": "sys"}, {"arrows": "to", "from": "Python\\ConvertPixelType\\ConvertPixelType.py", "to": "copy"}, {"arrows": "to", "from": "Python\\ConvertPixelType\\ConvertPixelType.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\ConvertPixelType\\ConvertPixelType.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\ConvertPixelType\\ConvertPixelType.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\Events\\Events.py", "to": "sys"}, {"arrows": "to", "from": "Python\\Events\\Events.py", "to": "copy"}, {"arrows": "to", "from": "Python\\Events\\Events.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\Events\\Events.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\Events\\Events.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\Events_Interface\\Events_Interface.py", "to": "sys"}, {"arrows": "to", "from": "Python\\Events_Interface\\Events_Interface.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\Events_Interface\\Events_Interface.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\Events_Interface\\Events_Interface.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\GrabImage\\GrabImage.py", "to": "sys"}, {"arrows": "to", "from": "Python\\GrabImage\\GrabImage.py", "to": "threading"}, {"arrows": "to", "from": "Python\\GrabImage\\GrabImage.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\GrabImage\\GrabImage.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\GrabImage\\GrabImage.py", "to": "hik_vision.Python.MvImport.MvCameraControl_class"}, {"arrows": "to", "from": "Python\\Grab_Callback\\Grab_Callback.py", "to": "sys"}, {"arrows": "to", "from": "Python\\Grab_Callback\\Grab_Callback.py", "to": "copy"}, {"arrows": "to", "from": "Python\\Grab_Callback\\Grab_Callback.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\Grab_Callback\\Grab_Callback.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\Grab_Callback\\Grab_Callback.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\Grab_LineStart\\Grab_LineStart.py", "to": "sys"}, {"arrows": "to", "from": "Python\\Grab_LineStart\\Grab_LineStart.py", "to": "threading"}, {"arrows": "to", "from": "Python\\Grab_LineStart\\Grab_LineStart.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\Grab_LineStart\\Grab_LineStart.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\HighBandwidthDecode\\HighBandwidthDecode.py", "to": "sys"}, {"arrows": "to", "from": "Python\\HighBandwidthDecode\\HighBandwidthDecode.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\HighBandwidthDecode\\HighBandwidthDecode.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\HighBandwidthDecode\\HighBandwidthDecode.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\ImageSave\\ImageSave.py", "to": "sys"}, {"arrows": "to", "from": "Python\\ImageSave\\ImageSave.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\ImageSave\\ImageSave.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\InterfaceAndDevice\\InterfaceAndDevice.py", "to": "sys"}, {"arrows": "to", "from": "Python\\InterfaceAndDevice\\InterfaceAndDevice.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\InterfaceAndDevice\\InterfaceAndDevice.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\InterfaceAndDevice\\InterfaceAndDevice.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\InterfaceDemo\\InterfaceDemo.py", "to": "sys"}, {"arrows": "to", "from": "Python\\InterfaceDemo\\InterfaceDemo.py", "to": "threading"}, {"arrows": "to", "from": "Python\\InterfaceDemo\\InterfaceDemo.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\InterfaceDemo\\InterfaceDemo.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\InterfaceDemo\\InterfaceDemo.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\MultiCast\\MultiCast.py", "to": "sys"}, {"arrows": "to", "from": "Python\\MultiCast\\MultiCast.py", "to": "threading"}, {"arrows": "to", "from": "Python\\MultiCast\\MultiCast.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\MultiCast\\MultiCast.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\MultiCast\\MultiCast.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\MultiLightCtrl_ImageStitching\\MultiLightCtrl_ImageStitching.py", "to": "sys"}, {"arrows": "to", "from": "Python\\MultiLightCtrl_ImageStitching\\MultiLightCtrl_ImageStitching.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\MultiLightCtrl_ImageStitching\\MultiLightCtrl_ImageStitching.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\MultipleCameras\\CamOperation_class.py", "to": "threading"}, {"arrows": "to", "from": "Python\\MultipleCameras\\CamOperation_class.py", "to": "time"}, {"arrows": "to", "from": "Python\\MultipleCameras\\CamOperation_class.py", "to": "sys"}, {"arrows": "to", "from": "Python\\MultipleCameras\\CamOperation_class.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\MultipleCameras\\CamOperation_class.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "sys"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "time"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "PyQt5.QtWidgets"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "PyQt5.QtGui"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "CamOperation_class"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "MvErrorDefine_const"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "CameraParams_header"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "PyUIMultipleCameras"}, {"arrows": "to", "from": "Python\\MultipleCameras\\MultipleCameras.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\MultipleCameras\\PyUIMultipleCameras.py", "to": "PyQt5"}, {"arrows": "to", "from": "Python\\MvImport\\CameraParams_header.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\MvImport\\CameraParams_header.py", "to": "CameraParams_const"}, {"arrows": "to", "from": "Python\\MvImport\\CameraParams_header.py", "to": "PixelType_header"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "sys"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "copy"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "PixelType_header"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "CameraParams_const"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "CameraParams_header"}, {"arrows": "to", "from": "Python\\MvImport\\MvCameraControl_class.py", "to": "MvErrorDefine_const"}, {"arrows": "to", "from": "Python\\MvImport\\PixelType_header.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "to": "time"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "to": "sys"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "to": "threading"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_FileAccess\\ParametrizeCamera_FileAccess.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_LineScanIOSettings\\ParametrizeCamera_LineScanIOSettings.py", "to": "sys"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_LineScanIOSettings\\ParametrizeCamera_LineScanIOSettings.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_LineScanIOSettings\\ParametrizeCamera_LineScanIOSettings.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_LoadAndSave\\ParametrizeCamera_LoadAndSave.py", "to": "sys"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_LoadAndSave\\ParametrizeCamera_LoadAndSave.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\ParametrizeCamera_LoadAndSave\\ParametrizeCamera_LoadAndSave.py", "to": "MvCameraControl_class"}, {"arrows": "to", "from": "Python\\Recording\\Recording.py", "to": "sys"}, {"arrows": "to", "from": "Python\\Recording\\Recording.py", "to": "threading"}, {"arrows": "to", "from": "Python\\Recording\\Recording.py", "to": "msvcrt"}, {"arrows": "to", "from": "Python\\Recording\\Recording.py", "to": "ctypes"}, {"arrows": "to", "from": "Python\\Recording\\Recording.py", "to": "MvCameraControl_class"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

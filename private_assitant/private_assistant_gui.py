@@ -10,7 +10,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from google.api_core.exceptions import ResourceExhausted
-
 # 配置日志记录
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)
