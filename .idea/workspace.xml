@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0239d1d1-8375-4ecf-9123-1fdc491b7dea" name="Changes" comment="ast_feature(function_based updated" />
+    <list default="true" id="0239d1d1-8375-4ecf-9123-1fdc491b7dea" name="Changes" comment="ast_feature(function_based updated">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -106,8 +108,9 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/J100052060/PycharmProjects/pythonProject1&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -126,7 +129,7 @@
       <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\openday_execuate\others" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.private_assistant">
+  <component name="RunManager">
     <configuration name="pick_place_demo_gui" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="langchain" />
       <option name="ENV_FILES" value="" />
@@ -220,10 +223,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.pick_place_demo_gui" />
       <item itemvalue="Python.private_assistant" />
-      <item itemvalue="Python.result_mg400_en_11.29" />
+      <item itemvalue="Python.pick_place_demo_gui" />
       <item itemvalue="Python.result_mg400_en" />
+      <item itemvalue="Python.result_mg400_en_11.29" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -522,7 +525,23 @@
       <option name="project" value="LOCAL" />
       <updated>1736473899743</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="ast_feature(function_based updated">
+      <option name="closed" value="true" />
+      <created>1736475602385</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1736475602385</updated>
+    </task>
+    <task id="LOCAL-00037" summary="ast_feature(function_based updated">
+      <option name="closed" value="true" />
+      <created>1736475748768</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1736475748768</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -536,7 +555,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/master" />
+                        <option value="master" />
                       </list>
                     </value>
                   </entry>
@@ -554,6 +573,7 @@
     <MESSAGE value="example uploaded" />
     <MESSAGE value="assistant_gui_updated,history_func_added,folder_read_func_developing" />
     <MESSAGE value="ast_updated,ast_graph_updated" />
+    <MESSAGE value="Revert &quot;ast_feature(function_based updated&quot;&#10;&#10;This reverts commit 3f971ac8" />
     <MESSAGE value="ast_feature(function_based updated" />
     <option name="LAST_COMMIT_MESSAGE" value="ast_feature(function_based updated" />
   </component>
