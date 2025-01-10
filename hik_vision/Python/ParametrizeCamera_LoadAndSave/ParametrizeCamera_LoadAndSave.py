@@ -81,7 +81,7 @@ if __name__ == "__main__":
     if ret != 0:
         print ("open device fail! ret[0x%x]" % ret)
         sys.exit()
-
+    '''
     print ("start export the camera properties to the file")
     print ("wait......")
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     if MV_OK != ret:
         print ("save feature fail! ret [0x%x]" % ret)
     print ("finish export the camera properties to the file")
-
+    '''
     print ("start import the camera properties from the file")
     print ("wait......")
 
