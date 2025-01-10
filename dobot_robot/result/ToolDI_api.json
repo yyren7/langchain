@@ -1,0 +1,14 @@
+{
+    "api名称": "ToolDI（立即指令）",
+    "原型": "ToolDI(index)",
+    "描述": "获取末端DI端口的状态。",
+    "参数": [
+        {
+            "参数名": "index",
+            "类型": "int",
+            "说明": "末端DI端子的编号"
+        }
+    ],
+    "返回": "ErrorID,{value},ToolDI(index);",
+    "示例": "ToolDI(1)\n# 获取末端DI1的状态。"
+}

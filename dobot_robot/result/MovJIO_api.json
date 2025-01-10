@@ -1,0 +1,14 @@
+{
+    "api名称": "MovJIO",
+    "原型": "MovJIO(X,Y,Z,R,{Mode,Distance,Index,Status},...,{Mode,Distance,Index,Status},User=index,Tool=index,SpeedJ=R,AccJ=R,CP=R)",
+    "描述": "从当前位置以关节运动方式运动至笛卡尔坐标目标点，运动时并行设置数字输出端口状态。",
+    "参数": [
+        {"参数名": "X", "类型": "double", "说明": "目标点X轴位置，单位：mm"},
+        {"参数名": "Y", "类型": "double", "说明": "目标点Y轴位置，单位：mm"},
+        {"参数名": "Z", "类型": "double", "说明": "目标点Z轴位置，单位：mm"},
+        {"参数名": "R", "类型": "double", "说明": "目标点R轴位置，单位：度"},
+        {"参数名": "{Mode,Distance,Index,Status}", "类型": "并行数字输出参数", "说明": "用于设置当机械臂运动到指定距离或百分比时，触发指定DO。可设置多组，参数具体含义如下：\n参数名 类型 说明\nMode int 触发模式。0表示距离百分比，1表示距离数值\nDistance int 指定距离。 Distance为正数时，表示离起点的距离； Distance为负数时，表示离目标点的距离； Mode为0时，Distance表示和总距离的百分比；取值范围：(0,100]； Mode为1时，Distance表示距离的值。单位：mm\nIndex int DO端子的编号\nStatus int 要设置的DO状态，0表示无信号，1表示有信号"}
+    ],
+    "返回": "ErrorID,{},MovJIO(X,Y,Z,R,{Mode,Distance,Index,Status},...,{Mode,Distance,Index,Status});",
+    "示例": "MovJIO(-100,100,200,150,{0,50,1,0})\n# 机械臂从当前位置通过关节运动方式运动至笛卡尔坐标点{-100,100,200,150}，并在运动到50%的距离时将DO1设为无信号。"
+}

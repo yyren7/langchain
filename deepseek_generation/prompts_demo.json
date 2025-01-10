@@ -1,0 +1,110 @@
+{
+    "groups": [
+        {
+            "name": "first_group",
+            "coordinates": [
+                {
+                    "name": "coordinate_point",
+                    "x": "298",
+                    "y": "199",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "278",
+                    "y": "199",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "258",
+                    "y": "199",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "238",
+                    "y": "199",
+                    "z": "14",
+                    "r": "0"
+                }
+            ]
+        },
+        {
+            "name": "second_group",
+            "coordinates": [
+                {
+                    "name": "coordinate_point",
+                    "x": "298",
+                    "y": "179",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "278",
+                    "y": "179",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "258",
+                    "y": "179",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "238",
+                    "y": "179",
+                    "z": "14",
+                    "r": "0"
+                }
+            ]
+        },
+        {
+            "name": "third_group",
+            "coordinates": [
+                {
+                    "name": "coordinate_point",
+                    "x": "298",
+                    "y": "159",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "278",
+                    "y": "159",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "258",
+                    "y": "159",
+                    "z": "14",
+                    "r": "0"
+                },
+                {
+                    "name": "coordinate_point",
+                    "x": "238",
+                    "y": "159",
+                    "z": "14",
+                    "r": "0"
+                }
+            ]
+        }
+    ],
+    "prompts": [
+        "\"This assistant generates Python code for robot pick-and-place tasks by using the provided API \"\n                    \"and following the example program. It must understand the internal structure of the API and use \"\n                    \"the following imports: from dobot_api import DobotApiDashboard, DobotApi, DobotApiMove and \"\n                    \"def connect_robot() with right ip and port..At the start of the task, the robot must be activated, and there should be a \"\n                    \"2-second wait. The robot's speed should be adjusted to 50% of its maximum speed.Strict \"\n                    \"adherence to the API usage methods is required, and only the functions provided in the API \"\n                    \"should be used to generate the program. Do not use any other unspecified functions, as this will \"\n                    \"cause errors.After each motion command, a synchronization command must be used to ensure the \"\n                    \"robot reaches the specified position before unlocking the next step. Otherwise, it will result \"\n                    \"in discrepancies between the program and the robot's movement.\"",
+        "\"The original position is[298, 199, 14, 0],From this point, there are three more objects spaced 20 \"\n                   \"units apart leftward. Then, to the downside of this point, at 20 units and another 20 units \"\n                   \"further, there are two more rows of objects arranged in the same pattern. Please tell me these \"\n                   \"points in groups.To determine the groups of points based on the given description, we can break \"\n                   \"down the problem step by step.\"",
+        "\" Analyze and report whether each line of code in the program uses functions from \"\n                               \"DobotApiDashboard, DobotApi, and DobotApiMove that exist in their respective function \"\n                               \"lists as documented in the API.The function names, number of parameters, \"\n                               \"and parameter types must strictly match the API documentation.If there are any \"\n                               \"errors, report the locations of the errors and provide a corrected version of the \"\n                               \"program.\"\"Sync() belongs to the DobotApiMove class, not the DobotApi class.SpeedFactor() belongs to \"\n                         \"the DobotApiDashboard class, not the DobotApiMove class.  The MovL and MovJ commands\"\n                         \"must accept four individual numerical values rather than an array.\"",
+        "'Pick-and-place task: Assume there are k pick coordinates.'\n                                   '1.First, move to a position 20 cm directly above the starting pick coordinate, then move 20 cm downward.'\n                                   '2.Use the relevant function from mg400_api to activate the specified digital output.'\n                                   '3.Ascend 20 cm from the current position.'\n                                   '4.Move to a position 20 cm directly above the placement coordinate, then move 20 cm downward.'\n                                   '5.Use the relevant function from mg400_api to deactivate the specified digital output.'\n                                   '6.Ascend 20 cm from the current position.'\n                                   '7.Return the string [Task k completed] for the k-th task.'\n                                   'After completing all tasks in the loop, reset the value of k to zero and return the string [All tasks completed]. '\n                                   'Repeat this program from the beginning.'",
+        "\"pick the objects and place them in the specified positions. ip=192.168.250.101. DO=1.\""
+    ]
+}

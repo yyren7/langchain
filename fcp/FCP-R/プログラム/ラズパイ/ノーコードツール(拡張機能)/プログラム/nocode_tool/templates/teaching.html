@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <title>Teaching</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .button {
+      background-color: #24618a;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 120px;
+      height: 50px;
+      margin: 0 10px;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .button.red {
+      background-color: #922f16;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .set {
+      display: flex;
+      margin-right: 10px;
+    }
+
+    .label {
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      margin-right: 0px;
+      background-color: #f2f2f2;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .value {
+      border: 1px solid black;
+      padding: 5px 10px;
+      margin-right: 5px;
+      width: 70px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    input[type="text"] {
+      background-color: #08c1fa;
+      border: 1px solid #ccc; /* ボーダーを設定 */
+      padding: 8px; /* 内側の余白を設定 */
+      font-size: 16px; /* フォントサイズを設定 */
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="tabs">
+    <ul class="visual">
+      <li><a href="#" onclick="goToPage('/blockly')">Block</a></li>
+      <li><a href="#" onclick="goToPage('/teaching')" class="active">Teaching</a></li>
+    </ul>
+  </div>
+  <script>
+    function goToPage(url) {
+      window.location.href = url;
+    }
+  </script>
+
+
+  <div class="container">
+    <div class="set">
+      <div class="label">X</div><div id="x_pos" class="value">0.0</div>
+    </div>
+    <div class="set">
+      <div class="label">Y</div><div id="y_pos" class="value">0.0</div>
+    </div>
+    <div class="set">
+      <div class="label">Z</div><div id="z_pos" class="value">0.0</div>
+    </div>
+    <div class="set">
+      <div class="label">Rz</div><div id="rz_pos" class="value">0.0</div>
+    </div>
+    <div class="set">
+      <div class="label">No.</div><input type="text" id="point_no" class="value" value="1">
+    </div>
+    <div class="set">
+      <div class="label">inching width</div><input type="text" id="inching_width" class="value" value="1">
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button class="button" id="start_manual_SW" onclick="startMaualProgram()">Manual Run</button>
+    <button class="button red" id="stop_SW" onclick="stopProgram()">Stop</button>
+    <button class="button" id="get" onclick="getCurrentPos()">Get</button>
+    <button class="button" id="read" onclick="readTeaching()">Read</button>
+    <button class="button" id="write" onclick="writeTeaching('1')">Write</button>
+    <button class="button" id="servo_SW" onclick="setServo('')">servo</button>
+    <button class="button" id="jog_SW" onclick="selectJog('')">Jog</button>
+    <button class="button" id="inching_SW" onclick="selectInching('')">Inching</button>
+    <button class="button" id="plus_x_SW" onclick="runPlusX('')">+X</button>
+    <button class="button" id="minus_x_SW" onclick="runMinusY('')">-X</button>
+  </div>
+
+  <script>
+    const start_manual = document.getElementById('start_manual_SW');
+    const stop = document.getElementById('stop_SW');
+    const servo = document.getElementById('servo_SW');
+    const jog = document.getElementById('jog_SW');
+    const inching = document.getElementById('inching_SW');
+
+    const dst_IP_addr = window.location.hostname;
+
+    //////////////////////////////////////////////////
+    // 現在位置更新
+    //////////////////////////////////////////////////
+    function updateCurrentPos(pos_x, pos_y, pos_z) {
+      let x_pos = document.getElementById("x_pos");
+      let y_pos = document.getElementById("y_pos");
+      let z_pos = document.getElementById("z_pos");
+      x_pos.textContent = pos_x;
+      y_pos.textContent = pos_y;
+      z_pos.textContent = pos_z;
+    }
+    //////////////////////////////////////////////////
+    // サーバーとやり取りする関数
+    //////////////////////////////////////////////////
+    function sendTextQueryWithPostFetchReq(port, path, text, query1) {
+      //fetch('http://localhost:'+ String(port) + '/' + path + '?prog_name=' + encodeURIComponent(query1), {
+      fetch(`http://${dst_IP_addr}:`+ String(port) + '/' + path + '?prog_name=' + encodeURIComponent(query1), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // リクエストのコンテンツタイプをJSONに設定
+        },
+        body: text
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function sendAryWithPostFetchReq(port, path, ary) {
+      fetch(`http://${dst_IP_addr}:`+ String(port) + '/' + path, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // リクエストのコンテンツタイプをJSONに設定
+        },
+        body: JSON.stringify(ary)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function getTextWithGetFetchReq(port, path)  {
+      return fetch(`http://${dst_IP_addr}:`+ String(port) + '/' + path)
+      .then(response => {
+        // レスポンスをJSONに変換し、その結果を処理するPromiseを返す
+        return response.text();
+      })
+      .catch(error => {
+        console.error('Error fetching Text data', error);
+        throw error;
+      });
+    }
+
+    function getAryWithGetFetchReq(port, path) {
+      return fetch(`http://${dst_IP_addr}:`+ String(port) + '/' + path)
+        .then(response => {
+          // レスポンスをJSONに変換し、その結果を処理するPromiseを返す
+          return response.json();
+        })
+        .catch(error => {
+          console.error('Error fetching JSON data', error);
+          throw error;
+        });
+    }
+
+
+    function startMaualProgram() {
+      sendTextQueryWithPostFetchReq(3001, 'startPython', '', 'manual');
+    }
+
+    function stopProgram() {
+      getTextWithGetFetchReq(3001, 'stopPython');
+      // ボタンの色を初期化
+      start_manual.style.backgroundColor = ''; // ボタンの背景色をデフォルトに設定
+      start_manual.style.color = ''; 
+    }
+
+    function setServo() {
+      getTextWithGetFetchReq(3002, 'setServo');
+    }
+  
+    function selectJog() {
+      getTextWithGetFetchReq(3002, 'selectJog');
+    }
+
+    function selectInching() {
+      getTextWithGetFetchReq(3002, 'selectInching');
+    }
+
+    function runPlusX() {
+      getTextWithGetFetchReq(3002, 'runPlusX');
+    }
+
+    function runMinusY() {
+      getTextWithGetFetchReq(3002, 'runMinusY');
+    }
+
+    function getRelay(bits_str, relay_no){
+      let word_index = Math.floor(relay_no / 100);// + Math.floor(offset / 15)
+      let bit_index = (relay_no % 100);// + (offset % 15);
+      let bit_pos = (word_index) * 16 + (15 - (bit_index));
+      return Number(bits_str.charAt(bit_pos));
+    }
+
+    //////////////////////////////////////////////////
+    // 画面更新
+    //////////////////////////////////////////////////
+    function updatePage() {
+      getRobotStatusData()
+        .then(data => {
+          updateButtons(data);
+          updateCurrentPos(data.current_pos.x, data.current_pos.y, data.current_pos.z);
+          setTimeout(updatePage, 500);
+        })
+        .catch(error => {
+          console.error('Error in getRobotStatusData:', error);
+          setTimeout(updatePage, 500);
+        });
+    }
+    
+    function getRobotStatusData() {
+      return getAryWithGetFetchReq(3002, 'getRobotStatus');
+    }
+    
+    function updateButtons(data) {
+      const R_bits_str = data.R_relay.map(word => word.toString(2).padStart(16, '0')).join('');
+    
+      updateButtonStyle(getRelay(R_bits_str, 6201), start_manual);
+      updateButtonStyle(getRelay(R_bits_str, 6203), servo);
+      updateButtonStyle(getRelay(R_bits_str, 5800), jog);
+      updateButtonStyle(getRelay(R_bits_str, 5801), inching);
+    }
+    
+    function updateButtonStyle(relayValue, buttonElement) {
+      if (relayValue === 1) {
+        buttonElement.style.backgroundColor = '#08c1fa';
+        buttonElement.style.color = '#070000';
+      } else {
+        buttonElement.style.backgroundColor = '';
+        buttonElement.style.color = '';
+      }
+    }
+    
+    // ブロックフローの更新開始
+    updatePage();
+  </script>
+
+    <script>
+      //////////////////////////////////////////////////
+      // 現在位置取得
+      //////////////////////////////////////////////////
+      function getCurrentPos() {
+        let x_pos = document.getElementById("x_pos");
+        let y_pos = document.getElementById("y_pos");
+        let z_pos = document.getElementById("z_pos");
+        let point_no = document.getElementById('point_no');       
+        let x_pos_cell = document.getElementById('x_pos-' + point_no.value);
+        let y_pos_cell = document.getElementById('y_pos-' + point_no.value);
+        let z_pos_cell = document.getElementById('z_pos-' + point_no.value);
+
+        x_pos_cell.value = x_pos.textContent;
+        y_pos_cell.value = y_pos.textContent;
+        z_pos_cell.value = z_pos.textContent;
+      }
+  </script>
+</div>
+
+<table border="1" id="teaching_table"></table>
+<script>
+  //////////////////////////////////////////////////
+  // テーブル作成
+  //////////////////////////////////////////////////
+  // ヘッダー用の配列
+  const headers = ['No.', 'name', 'x_pos', 'y_pos', 'z_pos', 'rz_pos', 'ry_pos', 'rx_pos', 'vel', 'acc', 'dec'];
+  const MAX_rows = 14;
+  // 前の緑色のセルを追跡する変数
+  let previousGreenCell = null;
+  // テーブルを動的に生成する関数
+  function createTable(rows, cols) {
+      const table = document.getElementById('teaching_table');
+      // ヘッダー行を作成
+      const headerRow = table.insertRow();
+      headers.forEach(header => {
+          const headerCell = document.createElement('th');
+          headerCell.textContent = header;
+          headerRow.appendChild(headerCell);
+      });
+      // データ行を作成
+      for (let i = 0; i < rows; i++) {
+          const row = table.insertRow();
+          for (let j = 0; j < cols; j++) {
+              const cell = row.insertCell();
+              if (headers[j] === 'name') {
+                  // 'name'列の場合はinputにしておく
+                  const input = document.createElement('input');
+                  input.type = 'text';
+                  input.value = '';
+                  input.style.width = '100px'; // セルの幅を個別に設定
+                  // セルに一意のIDを設定 (ヘッダ名 + 行番号)
+                  input.id = `${headers[j]}-${i+1}`;
+                  cell.appendChild(input);
+                  // inputが右クリックされた時の処理
+                  input.addEventListener('contextmenu', function(event) {
+                      event.preventDefault(); // デフォルトの右クリックメニューを無効化
+                      let point_no = document.getElementById("point_no");
+                      point_no.value = i + 1;
+                      // 前の緑色のセルを元に戻す
+                      if (previousGreenCell) {
+                          previousGreenCell.style.backgroundColor = ''; // デフォルトの背景色に戻す
+                      }
+                      // 現在のセルを緑色に変更
+                      input.style.backgroundColor = '#00FF00';
+                      previousGreenCell = input;
+                  });
+              } else 
+              {
+                  // 'name'以外の列は入力ボックスにする
+                  const input = document.createElement('input');
+                  input.type = 'text';
+                  input.value = '';
+                  input.style.width = j === 0 ? '50px' : '100px'; // セルの幅を個別に設定
+                  // セルに一意のIDを設定 (ヘッダ名 + 行番号)
+                  input.id = `${headers[j]}-${i+1}`;
+                  cell.appendChild(input);
+              }
+          }
+      }
+  }
+  // 10×11のテーブルを生成
+  createTable(MAX_rows, headers.length);
+
+  //////////////////////////////////////////////////
+  // テーブル操作
+  //////////////////////////////////////////////////
+  function readTeaching() {
+    getAryWithGetFetchReq(3000, 'jsonData')
+      .then(data => {
+        // JSONデータを処理する
+        for (let i = 0; i < headers.length; i++) {
+          for (let j = 0; j < MAX_rows; j++) {
+            const target_cell = document.getElementById(headers[i]+'-'+String(j+1));
+            if(headers[i] === 'No.'){
+              target_cell.value = j + 1;
+            } else {
+              target_cell.value = data['P'+String(j+1)][headers[i]];
+            }
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error reading teaching data', error);
+        // エラーメッセージの表示など、エラー処理を行う
+      });
+  }
+
+
+  function writeTeaching(page_no) {
+    const point_data_list = {};
+    
+    // 各行ごとにループ
+    for (let i = 0; i < MAX_rows; i++) {
+      // 各行のセルデータを格納するオブジェクトを作成
+      const point_data = {};
+      // 各列ごとにループ
+      for (let j = 0; j < headers.length; j++) {
+        // セルのIDを生成
+        const cellId = `${headers[j]}-${i+1}`;
+        const cellData = document.getElementById(cellId).value;
+        
+        // 最初の列（P1、P2、...）以外のデータをオブジェクトに追加
+        if (j > 0) {
+          if(headers[j] === 'name'){
+            point_data[headers[j]] = cellData;
+          }
+          else{
+            point_data[headers[j]] = Number(cellData);
+
+          }
+        }
+      }
+      // point_data_listに行データを追加
+      point_data_list['P' + (i + 1)] = point_data;
+    }    
+    // サーバーにデータを送信
+    sendAryWithPostFetchReq(3000, 'writeTeaching', point_data_list);
+  }
+
+</script>
+</body>
+</html>

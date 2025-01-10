@@ -1,0 +1,30 @@
+@startuml
+|ユーザー|
+start
+fork
+    |ユーザー|
+    :Blocklyを\n操作する;
+    -> キーボード・マウス操作;
+    |RasPi|
+    :Blockコードを\n表示する;
+    :Pythonコードを\n生成する;
+    stop
+fork again
+    |ユーザー|
+    :実行ボタンを\n押下する;
+    -> ボタン押下;
+    |RasPi|
+    :Pythonプログラムを\n実行する;
+    -> 動作コマンド;
+    |ロボット|
+    :フロー通り動作する;
+    stop
+fork again
+    |ユーザー|
+    :生成ボタンを\n押下する;
+    -> ボタン押下;
+    |RasPi|
+    :Pythonをニーモニックに\n変換する;
+    stop
+end fork
+@enduml

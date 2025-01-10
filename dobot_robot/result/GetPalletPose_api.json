@@ -1,0 +1,19 @@
+{
+    "api名称": "GetPalletPose（立即指令）",
+    "原型": "GetPalletPose(Palletname,index)",
+    "描述": "获取已创建的托盘的指定点位。索引和点位的对应关系请参考PalletCreate的描述。",
+    "参数": [
+        {
+            "参数名": "Palletname",
+            "类型": "string",
+            "说明": "托盘名称"
+        },
+        {
+            "参数名": "index",
+            "类型": "int",
+            "说明": "点位索引，从1开始"
+        }
+    ],
+    "返回": "ErrorID,{X,Y,Z,R},GetPalletPose(Palletname,index);",
+    "示例": "GetPalletPose(pallet1,5)\n# 获取名称为pallet1的托盘的索引为5的点位的笛卡尔坐标。"
+}
