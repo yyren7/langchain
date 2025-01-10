@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0239d1d1-8375-4ecf-9123-1fdc491b7dea" name="Changes" comment="ast_feature(function_based updated" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {}
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/yyren7/langchain.git&quot;,
+    &quot;accountId&quot;: &quot;3569a7bc-ff88-4493-b281-95dfc63d669c&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/private_assitant/result.md" root0="FORCE_HIGHLIGHTING" root1="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2h7OYhgzPZ38Hhg8BPqpFMpyn2e" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.BasicDemo.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BasicDemoByGenTL.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BasicDemoLineScanCamera.executor&quot;: &quot;Run&quot;,
+    &quot;Python.COT_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Events.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Events_Interface.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GrabImage.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ImageSave.executor&quot;: &quot;Run&quot;,
+    &quot;Python.InterfaceAndDevice.executor&quot;: &quot;Run&quot;,
+    &quot;Python.InterfaceDemo.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ParametrizeCamera_FileAccess.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ParametrizeCamera_LoadAndSave.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PyUIMultipleCameras.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzation_stream.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer_markdown_multiple_language.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer_markdown_multiple_language_11.23.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer_markdown_multiple_language_simplified.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer_python_executor.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyzer_python_executor_markdown.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ast.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ast_analyze.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ast_analyze_function_based.executor&quot;: &quot;Run&quot;,
+    &quot;Python.code_generation_12.09.executor&quot;: &quot;Run&quot;,
+    &quot;Python.directory_analyzer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gemini_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph_function_based.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gui_qthread.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pick_place_demo_gui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pick_place_demo_gui_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pick_place_demo_gui_pyside6.executor&quot;: &quot;Run&quot;,
+    &quot;Python.private_assistant.executor&quot;: &quot;Run&quot;,
+    &quot;Python.private_assistant_gui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.private_assistant_gui_v2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.private_assistant_gui_v3(button_updated).executor&quot;: &quot;Run&quot;,
+    &quot;Python.private_assistant_v1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.private_assistant_v2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/J100052060/PycharmProjects/pythonProject1&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\hik_vision" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\private_assitant" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\hik_vision\Python" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\analysis\quick-fcpr-analysis" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\openday_execuate\openday_11.29\openday_execuate" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\hik_vision" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\analysis" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\analysis\vast-vision-nocode-tool-analysis" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\langchain" />
+      <recent name="C:\Users\J100052060\PycharmProjects\pythonProject1\openday_execuate\others" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.private_assistant">
+    <configuration name="pick_place_demo_gui" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="langchain" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.9 virtualenv at C:\Users\J100052060\PycharmProjects\pythonProject1\venv" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\J100052060\PycharmProjects\pythonProject1\openday_execuate\openday_11.29" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/openday_execuate/openday_11.29/pick_place_demo_gui.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="private_assistant" type="PythonConfigurationType" factoryName="Python">
+      <module name="langchain" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.9 virtualenv at C:\Users\J100052060\PycharmProjects\pythonProject1\venv" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\J100052060\PycharmProjects\pythonProject1\private_assitant" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/private_assitant/private_assistant_gui_v3(button_updated).py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="result_mg400_en" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="langchain" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.9 virtualenv at C:\Users\J100052060\PycharmProjects\pythonProject1\venv" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\J100052060\PycharmProjects\pythonProject1\openday_execuate\openday_11.29\openday_execuate" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/openday_execuate/openday_11.29/openday_execuate/result_mg400_en.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="result_mg400_en_11.29" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="langchain" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.9 virtualenv at C:\Users\J100052060\PycharmProjects\pythonProject1\venv" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\J100052060\PycharmProjects\pythonProject1\preparation" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/preparation/result_mg400_en_11.29.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.pick_place_demo_gui" />
+      <item itemvalue="Python.private_assistant" />
+      <item itemvalue="Python.result_mg400_en_11.29" />
+      <item itemvalue="Python.result_mg400_en" />
+    </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-fb887030ada0-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.21565.199" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0239d1d1-8375-4ecf-9123-1fdc491b7dea" name="Changes" comment="" />
+      <created>1716941699185</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1716941699185</updated>
+    </task>
+    <task id="LOCAL-00001" summary="langchain created">
+      <option name="closed" value="true" />
+      <created>1730954063966</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730954063967</updated>
+    </task>
+    <task id="LOCAL-00002" summary="document uploaded">
+      <option name="closed" value="true" />
+      <created>1731391275467</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1731391275467</updated>
+    </task>
+    <task id="LOCAL-00003" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1731400312785</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731400312785</updated>
+    </task>
+    <task id="LOCAL-00004" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1731400455968</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731400455968</updated>
+    </task>
+    <task id="LOCAL-00005" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732070251486</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732070251486</updated>
+    </task>
+    <task id="LOCAL-00006" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732070300976</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732070300976</updated>
+    </task>
+    <task id="LOCAL-00007" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732086805644</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732086805644</updated>
+    </task>
+    <task id="LOCAL-00008" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732087281761</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732087281761</updated>
+    </task>
+    <task id="LOCAL-00009" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732091584195</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1732091584195</updated>
+    </task>
+    <task id="LOCAL-00010" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732269460473</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1732269460473</updated>
+    </task>
+    <task id="LOCAL-00011" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732273859008</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1732273859008</updated>
+    </task>
+    <task id="LOCAL-00012" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732604054168</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1732604054168</updated>
+    </task>
+    <task id="LOCAL-00013" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732618671833</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1732618671833</updated>
+    </task>
+    <task id="LOCAL-00014" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732623079334</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1732623079334</updated>
+    </task>
+    <task id="LOCAL-00015" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732704387034</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1732704387034</updated>
+    </task>
+    <task id="LOCAL-00016" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1732783100377</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1732783100377</updated>
+    </task>
+    <task id="LOCAL-00017" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733388496864</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1733388496864</updated>
+    </task>
+    <task id="LOCAL-00018" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733470539643</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1733470539643</updated>
+    </task>
+    <task id="LOCAL-00019" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733474510443</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1733474510443</updated>
+    </task>
+    <task id="LOCAL-00020" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733795099827</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1733795099827</updated>
+    </task>
+    <task id="LOCAL-00021" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733817218648</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1733817218649</updated>
+    </task>
+    <task id="LOCAL-00022" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733906357276</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1733906357276</updated>
+    </task>
+    <task id="LOCAL-00023" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1733993432400</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1733993432400</updated>
+    </task>
+    <task id="LOCAL-00024" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1734066587126</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1734066587127</updated>
+    </task>
+    <task id="LOCAL-00025" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1734656389790</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1734656389790</updated>
+    </task>
+    <task id="LOCAL-00026" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1734683474513</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1734683474513</updated>
+    </task>
+    <task id="LOCAL-00027" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1734944542053</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1734944542053</updated>
+    </task>
+    <task id="LOCAL-00028" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1735117266449</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1735117266449</updated>
+    </task>
+    <task id="LOCAL-00029" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1735274384934</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1735274384935</updated>
+    </task>
+    <task id="LOCAL-00030" summary="example uploaded">
+      <option name="closed" value="true" />
+      <created>1735285117581</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1735285117581</updated>
+    </task>
+    <task id="LOCAL-00031" summary="assistant_gui_updated,history_func_added,folder_read_func_developing">
+      <option name="closed" value="true" />
+      <created>1736147648108</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1736147648108</updated>
+    </task>
+    <task id="LOCAL-00032" summary="assistant_gui_updated,history_func_added,folder_read_func_developing">
+      <option name="closed" value="true" />
+      <created>1736153223838</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1736153223838</updated>
+    </task>
+    <task id="LOCAL-00033" summary="ast_updated,ast_graph_updated">
+      <option name="closed" value="true" />
+      <created>1736239564371</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1736239564371</updated>
+    </task>
+    <task id="LOCAL-00034" summary="ast_feature(function_based updated">
+      <option name="closed" value="true" />
+      <created>1736473156688</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1736473156688</updated>
+    </task>
+    <task id="LOCAL-00035" summary="ast_feature(function_based updated">
+      <option name="closed" value="true" />
+      <created>1736473899743</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1736473899743</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="langchain created" />
+    <MESSAGE value="document uploaded" />
+    <MESSAGE value="example uploaded" />
+    <MESSAGE value="assistant_gui_updated,history_func_added,folder_read_func_developing" />
+    <MESSAGE value="ast_updated,ast_graph_updated" />
+    <MESSAGE value="ast_feature(function_based updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="ast_feature(function_based updated" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hik_vision/Python/Recording/Recording.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hik_vision/Python/BasicDemo/BasicDemo.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
