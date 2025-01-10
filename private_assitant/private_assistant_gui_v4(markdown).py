@@ -18,7 +18,7 @@ from PySide6.QtGui import QTextCursor, QKeyEvent, QTextOption, QResizeEvent, QAc
 # ========== 核心：从文件2 (private_assistant_v2.py) 中导入 ==========
 from private_assistant_v2 import (
     DialogueAgent,
-    llm,
+    deepseek_llm,
     should_continue_tool
 )
 
@@ -112,7 +112,7 @@ class PrivateAssistantGUI(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
 
         # ========== 核心：使用从文件2导入的 DialogueAgent ==========
-        self.agent = DialogueAgent(llm)
+        self.agent = DialogueAgent(deepseek_llm)
 
         # 主窗口布局
         self.central_widget = QWidget()
@@ -241,7 +241,6 @@ Welcome to our tool! Here, you can ask questions and receive immediate responses
 
     def _load_file(self, file_path):
         """读取单个文件"""
-        # TODO: 调用llm判断文件类型并生成工具，然后调用工具处理文件
         try:
             with open(file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -253,7 +252,6 @@ Welcome to our tool! Here, you can ask questions and receive immediate responses
 
     def _load_folder(self, folder_path):
         """读取文件夹中的所有文件"""
-        # TODO: 循环使用 _load_file() 读取文件夹中的所有文件
         for root, _, files in os.walk(folder_path):
             for file_name in files:
                 file_path = os.path.join(root, file_name)

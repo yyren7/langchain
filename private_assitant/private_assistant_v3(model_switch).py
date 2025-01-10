@@ -47,7 +47,7 @@ yes表示用户不希望结束对话，no表示用户希望结束对话。
 User Input: {user_input}
 
 Response:"""
-    response = deepseek_llm.invoke(prompt)
+    response = llm.invoke(prompt)
     return response.content.strip().lower() == "yes"
 
 should_continue_tool = Tool(

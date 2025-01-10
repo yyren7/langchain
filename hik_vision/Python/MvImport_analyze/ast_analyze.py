@@ -179,7 +179,7 @@ def generate_interactive_graph(graph, output_file="dependency_graph.html"):
     print(f"交互式依赖图已保存为 {output_file}")
 
 if __name__ == "__main__":
-    project_directory = "Python/MvImport"  # 替换为你的项目路径
+    project_directory = "../MvImport/"  # 替换为你的项目路径
     output_file = "ast_features.json"
 
     print(f"正在解析项目目录：{project_directory}")

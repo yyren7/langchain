@@ -1,11 +1,11 @@
 [
     {
-        "file_path": "Python/MvImport\\CameraParams_const.py",
+        "file_path": "../MvImport/CameraParams_const.py",
         "imports": [],
         "functions": []
     },
     {
-        "file_path": "Python/MvImport\\CameraParams_header.py",
+        "file_path": "../MvImport/CameraParams_header.py",
         "imports": [
             {
                 "import_name": "ctypes.*",
@@ -15,18 +15,18 @@
             {
                 "import_name": "CameraParams_const.*",
                 "as_name": "*",
-                "source": "本地文件: Python/MvImport\\CameraParams_const.py"
+                "source": "本地文件: ../MvImport/CameraParams_const.py"
             },
             {
                 "import_name": "PixelType_header.*",
                 "as_name": "*",
-                "source": "本地文件: Python/MvImport\\PixelType_header.py"
+                "source": "本地文件: ../MvImport/PixelType_header.py"
             }
         ],
         "functions": []
     },
     {
-        "file_path": "Python/MvImport\\MvCameraControl_class.py",
+        "file_path": "../MvImport/MvCameraControl_class.py",
         "imports": [
             {
                 "import_name": "sys",
@@ -51,22 +51,22 @@
             {
                 "import_name": "PixelType_header.*",
                 "as_name": "*",
-                "source": "本地文件: Python/MvImport\\PixelType_header.py"
+                "source": "本地文件: ../MvImport/PixelType_header.py"
             },
             {
                 "import_name": "CameraParams_const.*",
                 "as_name": "*",
-                "source": "本地文件: Python/MvImport\\CameraParams_const.py"
+                "source": "本地文件: ../MvImport/CameraParams_const.py"
             },
             {
                 "import_name": "CameraParams_header.*",
                 "as_name": "*",
-                "source": "本地文件: Python/MvImport\\CameraParams_header.py"
+                "source": "本地文件: ../MvImport/CameraParams_header.py"
             },
             {
                 "import_name": "MvErrorDefine_const.*",
                 "as_name": "*",
-                "source": "本地文件: Python/MvImport\\MvErrorDefine_const.py"
+                "source": "本地文件: ../MvImport/MvErrorDefine_const.py"
             }
         ],
         "functions": [
@@ -1078,12 +1078,12 @@
         ]
     },
     {
-        "file_path": "Python/MvImport\\MvErrorDefine_const.py",
+        "file_path": "../MvImport/MvErrorDefine_const.py",
         "imports": [],
         "functions": []
     },
     {
-        "file_path": "Python/MvImport\\PixelType_header.py",
+        "file_path": "../MvImport/PixelType_header.py",
         "imports": [
             {
                 "import_name": "ctypes.*",

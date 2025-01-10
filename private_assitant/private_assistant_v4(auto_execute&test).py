@@ -1,4 +1,4 @@
-# private_assistant_v2.py
+# private_assistant_v3.py
 # -*- coding: utf-8 -*-
 import os
 import logging
@@ -18,7 +18,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # ===== 1) 定义 LLM =====
 
-#如果要使用 Google GenAI，请取消注释并配置好 GOOGLE_API_KEY
+# 如果要使用 Google GenAI，请取消注释并配置好 GOOGLE_API_KEY
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash-exp",
     temperature=0,
@@ -37,7 +37,6 @@ deepseek_llm = ChatOpenAI(
     temperature=0
 )
 
-
 # ===== 2) 定义是否继续对话的 Tool =====
 def should_continue_tool_func(user_input):
     prompt = f"""判断用户是否明确表示要结束当前对话。仅回答yes或no，不包含任何其他文字。
@@ -48,9 +47,8 @@ yes表示用户不希望结束对话，no表示用户希望结束对话。
 User Input: {user_input}
 
 Response:"""
-    response = llm.invoke(prompt)
+    response = deepseek_llm.invoke(prompt)
     return response.content.strip().lower() == "yes"
-
 
 should_continue_tool = Tool(
     name="ShouldContinue",
@@ -58,8 +56,29 @@ should_continue_tool = Tool(
     description="Determines whether the conversation should continue based on user input."
 )
 
+# ===== 3) 定义切换模型的 Tool =====
+def switch_model_tool_func(user_input, agent):
+    """
+    根据用户输入切换模型。
+    - 如果用户输入“切换到deepseek”，则切换到 deepseek_llm。
+    - 如果用户输入“切换到gemini”，则切换到 llm（Gemini）。
+    """
+    if "切换到deepseek" in user_input.lower():
+        agent.model = deepseek_llm
+        return "已切换到 DeepSeek 模型。"
+    elif "切换到gemini" in user_input.lower():
+        agent.model = llm
+        return "已切换到 Gemini 模型。"
+    else:
+        return "未检测到切换模型的指令。"
 
-# ===== 3) 定义对话代理类 =====
+switch_model_tool = Tool(
+    name="SwitchModel",
+    func=lambda user_input: switch_model_tool_func(user_input, agent),  # 传入当前的 agent 实例
+    description="Switches between DeepSeek and Gemini models based on user input."
+)
+
+# ===== 4) 定义对话代理类 =====
 class DialogueAgent:
     def __init__(self, model, system_prompt="You are a helpful assistant."):
         self.model = model
@@ -82,6 +101,12 @@ class DialogueAgent:
                 # 逐块更新UI
         - 最后一个 yield 之后，对话就完整结束
         """
+        # 检查是否需要切换模型
+        switch_response = switch_model_tool_func(user_input, self)
+        if "已切换到" in switch_response:
+            yield switch_response  # 通知用户模型已切换
+            return  # 结束当前交互
+
         # 1) 记录用户输入
         self.messages.append(HumanMessage(content=user_input))
         self.dialogue_history.append(f"**You:** {user_input}")
