@@ -19,7 +19,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 # ===== 1) 定义 LLM =====
 
 #如果要使用 Google GenAI，请取消注释并配置好 GOOGLE_API_KEY
-llm = ChatGoogleGenerativeAI(
+gemini_llm = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash-exp",
     temperature=0,
     max_tokens=None,
@@ -37,7 +37,18 @@ deepseek_llm = ChatOpenAI(
     temperature=0
 )
 
+local_llm = ChatOpenAI(
+    base_url="http://192.168.16.190:1234/v1",
+    openai_api_key="lm-studio",
+    temperature=0.5
+)
+local_llm2 = ChatOpenAI(
+    model= "hf.co/bartowski/DeepSeek-R1-Distill-Qwen-32B-GGUF:Q5_K_S",
+    base_url="http://192.168.16.119:11434/v1",
+    api_key='ollama'
 
+)
+chat_llm = local_llm2
 # ===== 2) 定义是否继续对话的 Tool =====
 def should_continue_tool_func(user_input):
     prompt = f"""判断用户是否明确表示要结束当前对话。仅回答yes或no，不包含任何其他文字。
@@ -48,7 +59,7 @@ yes表示用户不希望结束对话，no表示用户希望结束对话。
 User Input: {user_input}
 
 Response:"""
-    response = llm.invoke(prompt)
+    response = chat_llm.invoke(prompt)
     return response.content.strip().lower() == "yes"
 
 
@@ -159,3 +170,15 @@ class DialogueAgent:
             ...
         except Exception as e:
             ...
+
+if __name__ == '__main__':
+    agent = DialogueAgent(model=chat_llm)
+    while True:
+        user_input = input("User: ")
+        if should_continue_tool.invoke(user_input):
+            break
+        for chunk in agent.interact_stream_generator(user_input):
+            if chunk is None:
+                break
+            print(chunk, end="", flush=True)
+    agent.save_dialogue_to_markdown()
